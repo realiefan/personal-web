@@ -14,7 +14,7 @@ const CONFIG = {
       id: "2",
       name: "Task",
       icon: "check-square",
-      link: "https://reminders.google.com/",
+      link: "https://tasksboard.com/",
     },
     {
       id: "5",
