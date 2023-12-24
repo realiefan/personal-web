@@ -12,9 +12,9 @@ const CONFIG = {
   firstButtonsContainer: [
     {
       id: "2",
-      name: "Task",
-      icon: "check-square",
-      link: "https://tasksboard.com/",
+      name: "Gmail",
+      icon: "mails",
+      link: "https://mail.google.com/mail/",
     },
     {
       id: "5",
