@@ -1,0 +1,272 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #212121;
+    color: #ffffff;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    /* Ensure a vertical layout */
+    align-items: center;
+    justify-content: flex-start;
+    /* Align content at the top */
+    height: 100vh;
+}
+
+.main-container {
+    width: 90%;
+    margin-top: 5%;
+    
+    /* Adjust as needed */
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    width: 90%;
+
+    
+}
+
+.modal-content {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 30px 20px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #ffffff;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Login button styles */
+.login-container {
+    position: absolute;
+    margin: 1em 2em 0 0;
+    right: 0;
+    top: 0;
+    color: #d8dee9;
+    border: none;
+    cursor: pointer;
+    background-color: #00000000;
+}
+
+.home-container {
+    position: absolute;
+    margin: 1em 2em;
+    left: 0;
+    top: 0;
+    color: #d8dee9;
+    border: none;
+    cursor: pointer;
+    background-color: #00000000;
+}
+
+.login-container button {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+
+.login-container button:hover {
+    background-color: #4fa3d1;
+}
+
+/* Input and button styles within the modal */
+.modal-content label {
+    display: block;
+    margin-top: 10px;
+    color: #61dafb;
+    
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    margin-top: 5px;
+    background-color: #000000;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 4px;
+    outline: none;
+    font-weight: 600;
+    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.35);
+}
+
+.modal-content button {
+    margin-top: 15px;
+    padding: 8px 12px;
+    cursor: pointer;
+    background: linear-gradient(90deg, #7f7dd1, #548dd9 100%, #548dd9 0);
+    color: #d6d4d4;
+    border: none;
+    border-radius: 4px;
+    outline: none;
+    font-weight: 600;
+    transition: background-color 0.3s;
+
+}
+
+.modal-content button:hover {
+    background: linear-gradient(90deg, #5e5cd5, #226ed2 100%, #126ce1 0);
+}
+
+/* Add this style for the subheading */
+.modal-subheading {
+    margin-bottom: 10px;
+    color: rgb(175, 174, 174);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.createAc {
+    color: #5e5cd5;
+}
+
+.openWalletButton {
+    margin: 5px;
+    padding: 18px 24px;
+    cursor: pointer;
+    background-color: #131314;
+    color: #d1cfcf;
+    border: none;
+    border-radius: 6px;
+    outline: none;
+    transition: background-color 0.3s;
+    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.35);
+    animation: fade-in 1s ease-in-out;
+}
+
+.openWalletButton:hover {
+    background-color: #f7931a;
+}
+
+#loginButton {
+    padding: 10px 16px;
+    cursor: pointer;
+    background-color: #212121;
+    color: #121212;
+    border: none;
+    border-radius: 4px;
+    outline: none;
+    transition: background-color 0.3s;
+    color: #f7931a;
+}
+
+#homeButton {
+    padding: 10px 16px;
+    cursor: pointer;
+    background-color: #212121;
+    color: #121212;
+    border: none;
+    border-radius: 4px;
+    outline: none;
+    transition: background-color 0.3s;
+    color: #7f7dd1;
+}
+
+
+.DVBtn {
+    margin: 5px;
+    font-size: small;
+    font-weight: 600;
+        padding: 5px 8px;
+        cursor: pointer;
+        background-color: #131314;
+        color: #d1cfcf;
+        border: none;
+        border-radius: 6px;
+        outline: none;
+        transition: background-color 0.3s;
+        box-shadow: 0 5px 7px rgba(0, 0, 0, 0.35);
+}
+
+
+.button-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+
+}
+
+
+/* Your existing CSS styles */
+
+.button-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-wrapper p {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #d1cfcf;
+    font-weight: 600;
+}
+
+#balanceDisplay {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 18px;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.DVContainer {
+    text-align: center;
+
+        color: #ffffff;
+        font-weight: 600;
+}
+
+#walletBalance {
+    font-weight: bold;
+    font-size: 26px;
+    color: #f7931a;
+}
+
+
+.divider {
+    position: relative;
+    margin-top: 10px;
+    height: 1px;
+}
+
+.div-transparent:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 5%;
+    right: 5%;
+    width: 90%;
+    height: 1px;
+
+    background-image: linear-gradient(to right, transparent, rgb(237, 240, 245), transparent);
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

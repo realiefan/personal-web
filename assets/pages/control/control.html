@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NostrWeb</title>
+    <link rel="stylesheet" href="/assets/pages/control/control.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        
+    </style>
+</head>
+
+<body>
+    <div class="container">
+   
+
+    <div>
+        
+        <div class="SubHeading">
+            <a>AppList Settings</a>
+        </div>
+
+        <section id="linksContainer">
+            <!-- Links will be dynamically added here -->
+        </section>
+    <div class="button-container">
+        <button id="addLinkButton" onclick="openLinkAddingDialog()">
+            <i data-lucide="plus-square" class="menu-icon"></i>
+        </button>
+    
+        <button id="backupRestoreButton" class="BackupRestore" onclick="openBackupRestoreDialog()">
+            <i data-lucide="folder-down" class="menu-icon"></i>
+        </button>
+    
+        <button class="delete" id="toggleDeleteButton" onclick="yourDeleteFunction()">
+            <i data-lucide="trash-2" class="menu-icon"></i>
+        </button>
+    </div>
+
+
+    <button id="homeButton" class="goHomeButton" onclick="goHome()">
+        <i data-lucide="x-circle" class="menu-icon"></i>
+    </button>
+    
+
+    <dialog id="linkAddingDialog" class="linkAddingDialog">
+        <div class="modal-subheading">You can add your custom web apps here, and 
+            they will be displayed on the homepage. Your list will be stored locally.. 
+            <br> <br>IYou can also explore latest Nostr webApp on <a class="createAc"
+                href="https://nostrapp.link/">NostrApps</a></p>
+        </div>
+        <div>
+            <label for="newLinkTitle"></label>
+            <input type="text" id="newLinkTitle" placeholder="Enter link title" />
+        </div>
+        <div>
+            <label for="newLinkURL"></label>
+            <input type="text" id="newLinkURL" placeholder="Enter link URL" />
+        </div>
+        <button onclick="addLink()">Add Link</button>
+        <button onclick="closeLinkAddingDialog()" >Cancel</button>
+       
+    </dialog>
+
+    <dialog id="backupRestoreDialog">
+        <button id="downloadDataButton">Backup</button>
+        <button id="restoreDataButton">Restore</button><br>
+        <button id="Cancel" style="margin-top: 10px;" onclick="closeBackupRestoreDialog()">Cancel</button>
+    </dialog>
+
+
+
+    
+
+    
+
+    <script src="/assets/pages/control/control.js">
+        
+    </script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

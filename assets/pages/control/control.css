@@ -1,0 +1,361 @@
+body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* Center the content vertically */
+    min-height: 100vh;
+    background-color: #212121;
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+}
+
+.container {
+    position: absolute;
+    top: 0%;
+    width: 95%;
+    max-width: 800px;
+    /* Center the container horizontally */
+}
+
+
+
+.Heading {
+    font-family: Google Sans, Helvetica Neue, sans-serif;
+    position: relative;
+
+    margin: 5%;
+    margin-top: 0.7em;
+    left: 0;
+    top: 0;
+    /* Apply the linear gradient to the text content of the logo */
+    background: linear-gradient(90deg, #7f7dd1, #548dd9 100%, #548dd9 0);
+    -webkit-background-clip: text;
+    color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+.SubHeading {
+    font-family: Google Sans, Helvetica Neue, sans-serif;
+    position: relative;
+
+    margin: 5%;
+    margin-top: 0.7em;
+    left: 0;
+    top: 0;
+    /* Apply the linear gradient to the text content of the logo */
+    background: linear-gradient(90deg, #7f7dd1, #548dd9 100%, #548dd9 0);
+    -webkit-background-clip: text;
+    color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 25px;
+    font-weight: 600;
+    animation: fade-in 1s ease-in-out;
+}
+
+
+#linksContainer {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 10px;
+    padding: 0px;
+    padding-top: 10px;
+    justify-content: center;
+    align-items: center;
+    max-width: 800px;
+    /* Set a maximum width for the container */
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    animation: fade-in 1s ease-in-out;
+    /* Center the container horizontally */
+}
+
+.button-container{
+    display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        margin-top: 30px;
+        animation: slideUp 0.5s ease-in-out forwards;
+
+}
+.menu-icon {
+    
+    
+    padding: 5px 5px;
+    border: none;
+    cursor: pointer;
+  
+}
+
+#addLinkButton:hover {
+    background: rgb(77, 10, 149)616;
+}
+
+#addLinkButton {
+    background: linear-gradient(90deg, #7f7dd1, #548dd9 100%, #548dd9 0);
+    font-size: 0px;
+    color: #212121;
+    padding: 4px;
+}
+
+#backupRestoreButton {
+    background: linear-gradient(90deg, #a77cb4, #7f7dd1);
+    font-size: 0px;
+    color: #212121;
+    padding: 4px;
+
+}
+
+
+#toggleDeleteButton {
+    background: linear-gradient(90deg, #cf8d7c, #a77cb4);
+    font-size: 0px;
+    color: #212121;
+    
+    padding: 4px;
+}
+
+#homeButton {
+    background: linear-gradient(90deg, #7f7dd1, #548dd9 100%, #548dd9 0);
+    position: absolute;
+    font-size: 0px;
+        margin: 5%;
+        
+        right: 0;
+        top: 0;
+        padding: 0px;
+        border-radius: 9999px;
+        animation: fade-in 1s ease-in-out;
+        color: #212121;
+        
+    
+}
+
+button {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #131314;
+    color: #d6d5d5;
+    padding: 8px 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    border-radius: 16px;
+    font-weight: 600;
+    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.35);
+}
+
+
+
+
+#backButton:hover {
+    background-color: #333;
+}
+
+button:hover {
+    background-color: #333;
+    
+}
+
+dialog {
+    background-color: #1e1e1e;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 30px 20px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        position: fixed;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+        width: 90%;
+        bottom: 30%;
+        max-width: 440px;
+
+    animation: slideUp 0.5s ease-in-out forwards;
+
+}
+
+dialog button {
+    margin-top: 15px;
+    padding: 8px 12px;
+    cursor: pointer;
+
+    color: #d6d4d4;
+    border: none;
+    border-radius: 4px;
+    outline: none;
+    font-weight: 600;
+    transition: background-color 0.3s;
+
+}
+
+dialog button:hover {
+    background: linear-gradient(90deg, #5e5cd5, #226ed2 100%, #126ce1 0);
+}
+
+input {
+    width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+        margin-top: 5px;
+        background-color: #000000;
+        color: #fff;
+        border: 1px solid #555;
+        border-radius: 4px;
+        outline: none;
+        font-weight: 600;
+        font-size: larger;
+        box-shadow: 0 5px 7px rgba(0, 0, 0, 0.35);
+}
+
+.modal-subheading {
+    margin-bottom: 10px;
+    color: rgb(175, 174, 174);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+input[type="text"]:focus {
+    border: 1px solid #333;
+    border-radius: 5px;
+    
+}
+
+input::placeholder {
+    color: #999;
+    /* Placeholder text color */
+    font-style: italic;
+    font-weight: 600;
+    font-size: large;
+    
+    /* Optional: Italicize the placeholder text */
+}
+
+/* Add focus styles for better visibility */
+input:focus::placeholder {
+    color: #666;
+    /* Adjust color on focus */
+}
+
+.link-container {
+    position: relative;
+    display: inline-block;
+}
+
+.delete-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    
+    color:  #cf8d7c;
+    border: none;
+    padding: 0px 0px;
+    cursor: pointer;
+    display: none;
+    font-size: larger;
+    
+}
+
+.hidden-button {
+    display: block;
+}
+
+
+#backupRestoreDialog {
+
+    border-radius: 8px;
+    max-width: 300px;
+    
+    padding: 44px;
+    z-index: 1000;
+    text-align: center;
+    
+}
+
+#downloadDataButton, #restoreDataButton, #Cancel {
+    margin-bottom: 10px;
+    font-size: 25px;
+    margin: 5px;
+}
+
+
+
+.createAc {
+    color: #5e5cd5;
+}
+
+
+
+
+
+
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideRight {
+    from {
+        transform: translatex(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translatex(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
