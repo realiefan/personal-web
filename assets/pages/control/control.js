@@ -161,7 +161,7 @@ function downloadData() {
   });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = "backup.json";
+  link.download = "linklist.json";
   link.click();
 }
 
