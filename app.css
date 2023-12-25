@@ -190,7 +190,7 @@ body {
 
 /* Search bar styles */
 .searchBar {
-  margin-top: 10px;
+  margin-top: 5px;
   text-align: center;
   margin-bottom: 10px;
   display: flex;
@@ -289,7 +289,7 @@ body {
 .buttonIcon {
   width: var(--icon);
   height: var(--icon);
-  color: #d8dee9;
+  color: #6c6ada;
 }
 
 .backup{

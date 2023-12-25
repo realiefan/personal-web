@@ -24,10 +24,10 @@ body {
     display: none;
     position: fixed;
     top: 30%;
-    left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
     width: 90%;
+    animation: slideUp 0.5s ease-in-out forwards;
 
     
 }
@@ -267,6 +267,18 @@ body {
     }
 
     to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
         opacity: 1;
     }
 }

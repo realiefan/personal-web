@@ -1,4 +1,4 @@
-const CACHE = "NostrNet-V0.2";
+const CACHE = "NostrNet-V0.3";
 
 importScripts(
   "https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js"
@@ -21,7 +21,15 @@ self.addEventListener("install", async (event) => {
         "/",
         "/index.html",
         "/app.css",
-        "assets/js/lists.js",
+        "/assets/js/lists.js",
+        "/assets/js/buttons.js",
+        "/assets/js/search.js",
+        "/assets/pages/control/control.js",
+        "/assets/pages/control/control.html",
+        "/assets/pages/control/control.css",
+        "/assets/pages/wallet/wallet.html",
+        "/assets/pages/wallet/wallet.css",
+        "/assets/pages/wallet/wallet.js",
       ]);
     })
   );
