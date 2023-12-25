@@ -146,15 +146,23 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("click", restoreData);
 });
 
-// Add these functions at the end of your JavaScript code
-
 function downloadData() {
-    const links = localStorage.getItem("links");
-    const blob = new Blob([links], { type: "application/json" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "links_backup.json";
-    link.click();
+  const allData = {};
+
+  // Iterate over all keys in local storage
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    const value = localStorage.getItem(key);
+    allData[key] = value;
+  }
+
+  const blob = new Blob([JSON.stringify(allData)], {
+    type: "application/json",
+  });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "backup.json";
+  link.click();
 }
 
 function restoreData() {
@@ -167,10 +175,18 @@ function restoreData() {
         if (file) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                const data = e.target.result;
-                localStorage.setItem("links", data);
-                // Reload links on the page
-                loadLinks();
+                const data = JSON.parse(e.target.result);
+
+                // Iterate over the keys in the loaded data and set them in local storage
+                for (const key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        localStorage.setItem(key, data[key]);
+                    }
+                }
+
+                // Reload data on the page
+                // Assuming there's a load function specific to your application
+                loadData();
                 // Close the dialog
                 closeBackupRestoreDialog();
             };
