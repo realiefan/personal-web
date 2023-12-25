@@ -5,6 +5,7 @@
   "version": "1.0.0",
   "start_url": "/",
   "display": "standalone",
+  "display_override": ["tabbed"],  
   "background_color": "#202124",
   "theme_color": "#202124",
   "icons": [
