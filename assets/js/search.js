@@ -6,7 +6,7 @@
    // Add your logic to perform the Google search with the searchTerm
    // For example, you can redirect the user to the Google search results page
    window.location.href =
-     "https://www.google.com/search?q=" + encodeURIComponent(searchTerm);
+     "https://www.duckduckgo.com/search?q=" + encodeURIComponent(searchTerm);
  }
 
 document.getElementById("googleSearch").addEventListener("keyup", function(event) {
