@@ -192,7 +192,7 @@ body {
 .searchBar {
   margin-top: 5px;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
   display: flex;
   justify-content: center;
   animation: fade-in 1s ease-in-out;
@@ -204,7 +204,7 @@ body {
 
 #googleSearch {
   padding: 5px 6px;
-  width: 95%;
+  width: 85%;
   font-size: large;
   background-color: #131314;
   box-shadow: 0 5px 7px rgba(0, 0, 0, 0.35);
@@ -242,6 +242,19 @@ body {
     color: #d8dee9;
     width: 95%;
     
+}
+
+#searchEngineDropdown {
+    margin: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      background-color: #131314;
+      box-shadow: 0 5px 7px rgba(0, 0, 0, 0.35);
+      border: none;
+      border-radius: 10px;
+      color: #d8dee9;
+      padding: 5px 10px;
+      color: #d8dee9;
 }
 
 
