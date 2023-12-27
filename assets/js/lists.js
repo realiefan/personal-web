@@ -181,3 +181,9 @@ function sortLinksAlphabetically(links) {
 }
 
 
+
+const otMeta = document.createElement('meta');
+otMeta.httpEquiv = 'origin-trial';
+otMeta.content = 'AkmkfDzmgfnMr7tEFkOtxDQSEJT7cvbDE8dFCzTCXVAIKqPkXBd8MqaNgEKBS+HT3xC8JU/5DmSug42IA9nDGgcAAABreyJvcmlnaW4iOiJodHRwczovL3d3dy53ZWJjb3JlLmxpdmU6NDQzIiwiZmVhdHVyZSI6IldlYkFwcFRhYlN0cmlwIiwiZXhwaXJ5IjoxNzE2OTQwNzk5LCJpc1N1YmRvbWFpbiI6dHJ1ZX0=';
+document.head.append(otMeta);
+
