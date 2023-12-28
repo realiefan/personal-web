@@ -1,9 +1,8 @@
 [{
-          "relation": ["delegate_permission/common.handle_all_urls"],
-                "target": {
-                        "namespace": "android_app",
-                                "package_name": "live.webcore.twa",
-                                        "sha256_cert_fingerprints": ["46:2C:D6:9F:9A:E3:A6:C2:71:80:2C:BC:CD:7A:2F:62:49:EB:20:30:9D:89:EB:87:0A:EC:60:68:37:B1:EB:31"]
-                                              }
-                                                  }]
-
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "live.webcore.twa",
+        "sha256_cert_fingerprints": ["46:2C:D6:9F:9A:E3:A6:C2:71:80:2C:BC:CD:7A:2F:62:49:EB:20:30:9D:89:EB:87:0A:EC:60:68:37:B1:EB:31"]
+      }
+    }]
