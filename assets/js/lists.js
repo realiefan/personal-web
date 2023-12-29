@@ -118,25 +118,28 @@ window.addEventListener("pageshow", (event) => {
   }
 });
 
+
 function updateLinkUsage(url, timeSpent) {
   const linkUsageData = getLinkUsageData();
+  const timeSpentInSeconds = timeSpent / 1000; // Convert milliseconds to seconds
 
   if (linkUsageData[url]) {
     // If the URL is already in the data, update the existing entry
     linkUsageData[url].count += 1;
-    linkUsageData[url].totalTimeSpent += timeSpent;
+    linkUsageData[url].totalTimeSpent += timeSpentInSeconds; // Save time in seconds
     linkUsageData[url].lastAccessed = new Date().toISOString();
   } else {
     // If the URL is not in the data, create a new entry
     linkUsageData[url] = {
       count: 1,
-      totalTimeSpent: timeSpent,
+      totalTimeSpent: timeSpentInSeconds, // Save time in seconds
       lastAccessed: new Date().toISOString(),
     };
   }
 
   setLinkUsageData(linkUsageData);
 }
+
 
 function getLinkUsageData() {
   return JSON.parse(localStorage.getItem("linkUsageData")) || {};
