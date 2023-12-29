@@ -84,7 +84,7 @@ function displayLinkAnalytics() {
   });
 
   function formatTime(milliseconds) {
-    const seconds = Math.floor(milliseconds / 1000);
+    const seconds = Math.floor(milliseconds / 1);
     return `${seconds} sec`;
   }
 
