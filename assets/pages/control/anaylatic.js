@@ -19,15 +19,12 @@ function displayLinkAnalytics() {
 
   // Get the top 15 items for chart
   const top15Data = sortedData.slice(0, 15);
-  const top15Labels = top15Data.map(
-    (timeSpent) => labels[data.indexOf(timeSpent)]
-  );
 
   const ctx = document.getElementById("linkAnalyticsChart").getContext("2d");
   new Chart(ctx, {
     type: "bar",
     data: {
-      labels: top15Labels.map(getHostName),
+      labels: labels.slice(0, 15).map(getHostName),
       datasets: [
         {
           label: "Time Spent (s)",
@@ -71,7 +68,6 @@ function displayLinkAnalytics() {
                 <td>${hostName}</td>
                 <td>${opens}</td>
                 <td>${timeSpent}</td>
-
             </tr>`;
   });
 
@@ -90,6 +86,10 @@ function displayLinkAnalytics() {
 
   function getLinkUsageData() {
     return JSON.parse(localStorage.getItem("linkUsageData")) || {};
+  }
+
+  function setLinkUsageData(data) {
+    localStorage.setItem("linkUsageData", JSON.stringify(data));
   }
 
   function getHostName(url) {
