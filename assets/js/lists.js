@@ -1,109 +1,112 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Load links from localStorage or add defaults
-  loadLinks();
-  
+const LINK_CONTAINER_ID = "linksContainer";
+const LINK_DIALOG_ID = "linkAddingDialog";
 
-  // Attach event listener for toggleDeleteButtons
+document.addEventListener("DOMContentLoaded", () => {
+  loadLinks();
+  // Attach event listener for toggleDeleteButtons (if needed)
 });
 
 function openLinkAddingDialog() {
-  document.getElementById("linkAddingDialog").showModal();
+  getDialogElement().showModal();
 }
 
 function closeLinkAddingDialog() {
-  document.getElementById("linkAddingDialog").close();
+  getDialogElement().close();
 }
 
 function addLink() {
-  const title = document.getElementById("newLinkTitle").value;
-  const url = document.getElementById("newLinkURL").value;
+  const titleInput = getElement("newLinkTitle");
+  const urlInput = getElement("newLinkURL");
 
-  if (title && url) {
-    const links = JSON.parse(localStorage.getItem("links")) || [];
+  const title = titleInput.value.trim();
+  const url = urlInput.value.trim();
 
-    // Check for duplicate links
-    const isDuplicate = links.some(
-      (link) => link.title === title || link.url === url
-    );
-    if (isDuplicate) {
+  if (isValidLink(title, url)) {
+    const links = getStoredLinks();
+
+    if (isDuplicateLink(links, { title, url })) {
       alert("This link already exists.");
       return;
     }
 
-    links.push({ title, url });
-    localStorage.setItem("links", JSON.stringify(links));
+    const newLink = { title, url };
+    links.push(newLink);
+    setStoredLinks(links);
 
-    const linkContainer = document.getElementById("linksContainer");
-
-    const linkDiv = createLinkContainer({ title, url });
+    const linkContainer = getElement(LINK_CONTAINER_ID);
+    const linkDiv = createLinkContainer(newLink);
 
     linkContainer.appendChild(linkDiv);
 
-    // Clear input fields
-    document.getElementById("newLinkTitle").value = "";
-    document.getElementById("newLinkURL").value = "";
-
-    // Close the modal
+    clearInputFields(titleInput, urlInput);
     closeLinkAddingDialog();
   } else {
     alert("Please enter both link title and URL");
   }
 }
 
-
-
 function createLinkContainer(link) {
-  const linkDiv = document.createElement("div");
-  linkDiv.className = "link-container";
+  const linkDiv = createElement("div", "link-container");
+  const linkButton = createElement("button", "mainButton", link.title);
 
-  const linkButton = document.createElement("button");
-  linkButton.textContent = link.title;
-  linkButton.className = "mainButton";
+  linkButton.addEventListener("click", () => redirectToLink(link.url));
 
-  linkButton.addEventListener("click", () => {
-    window.location.href = link.url;
-  });
-
-  linkDiv.appendChild(linkButton);
-
-  // Fetch icon and append it to the link container
   fetchIcon(link.url)
     .then((iconURL) => {
-      const icon = document.createElement("img");
-      icon.src = iconURL;
-      icon.alt = `${link.title} Icon`;
-      icon.className = "link-icon";
-
-      // Modify the event listener for the icon
-      icon.addEventListener("click", (event) => {
-        event.preventDefault(); // Prevent the default behavior of following the link
-        window.location.href = link.url; // Manually set the window location to the link's URL
-      });
-
-      linkDiv.insertBefore(icon, linkButton); // Insert icon before the button
+      const icon = createIconElement(iconURL, link.title);
+      linkDiv.insertBefore(icon, linkButton);
     })
     .catch((error) => {
       console.error("Error fetching icon:", error);
     });
 
+  linkDiv.appendChild(linkButton);
   return linkDiv;
 }
 
+function createIconElement(iconURL, title) {
+  const iconContainer = createElement("div", "icon-container");
+  const icon = createElement("img", "link-icon");
 
-function fetchIcon(url) {
-  const urlWithoutProtocol = url.replace(/^https?:\/\//, ""); // Remove "https://" or "http://"
-  const iconURL = `https://icon.horse/icon/${urlWithoutProtocol}`;
-  return Promise.resolve(iconURL);
+  icon.src = iconURL;
+  icon.alt = `${title} Icon`;
+
+  icon.addEventListener("click", (event) => {
+    event.preventDefault();
+    redirectToLink(iconURL);
+  });
+
+  iconContainer.appendChild(icon);
+  return iconContainer;
 }
 
+// Other functions remain unchanged
 
+function createElement(tag, className, textContent) {
+  const element = document.createElement(tag);
+  element.className = className;
 
+  if (textContent) {
+    element.textContent = textContent;
+  }
+
+  return element;
+}
+
+function redirectToLink(url) {
+  window.location.href = url;
+}
+
+function fetchIcon(url) {
+  const urlWithoutProtocol = url.replace(/^https?:\/\//, "");
+  return Promise.resolve(`https://icon.horse/icon/${urlWithoutProtocol}`);
+}
 
 function loadLinks() {
-  const linkContainer = document.getElementById("linksContainer");
-  let links = loadLinksFromLocalStorage();
+  const linkContainer = getElement(LINK_CONTAINER_ID);
+  let links = getStoredLinks();
 
-  if (links.length === 0) {
+  if (!links || links.length === 0) {
     links = setDefaultLinks();
   }
 
@@ -113,13 +116,48 @@ function loadLinks() {
     const linkDiv = createLinkContainer(link);
     linkContainer.appendChild(linkDiv);
   });
-
-
-
 }
 
-function loadLinksFromLocalStorage() {
+function createIconElement(iconURL, title, url) {
+  const iconContainer = createElement("div", "icon-container");
+  const icon = createElement("img", "link-icon");
+
+  icon.src = iconURL;
+  icon.alt = `${title} Icon`;
+
+  icon.addEventListener("click", (event) => {
+    event.preventDefault();
+    redirectToLink(url);
+  });
+
+  iconContainer.appendChild(icon);
+  return iconContainer;
+}
+
+function isValidLink(title, url) {
+  return title && url;
+}
+
+function getDialogElement() {
+  return getElement(LINK_DIALOG_ID);
+}
+
+function getElement(elementId) {
+  return document.getElementById(elementId);
+}
+
+function isDuplicateLink(links, newLink) {
+  return links.some(
+    (link) => link.title === newLink.title || link.url === newLink.url
+  );
+}
+
+function getStoredLinks() {
   return JSON.parse(localStorage.getItem("links")) || [];
+}
+
+function setStoredLinks(links) {
+  localStorage.setItem("links", JSON.stringify(links));
 }
 
 function setDefaultLinks() {
@@ -162,7 +200,7 @@ function setDefaultLinks() {
     { title: "UnleashedChat ", url: "https://unleashed.chat/" },
     { title: "ProtonMail", url: "https://mail.proton.me/" },
     { title: "NostrApps", url: "https://nostrapp.link/" },
-    {title: "Rumble", url: "https://rumble.com/",},
+    { title: "Rumble", url: "https://rumble.com/" },
     { title: "BlueSky", url: "https://bsky.app/" },
     { title: "Coracle", url: "https://coracle.social/" },
     { title: "CallOfWar", url: "https://www.callofwar.com/" },
@@ -170,8 +208,6 @@ function setDefaultLinks() {
     { title: "ShipYard", url: "https://shipyard.pub/" },
     { title: "Stream", url: "https://zap.stream/" },
   ];
-;
-
   localStorage.setItem("links", JSON.stringify(defaultLinks));
   return defaultLinks;
 }
@@ -179,11 +215,3 @@ function setDefaultLinks() {
 function sortLinksAlphabetically(links) {
   links.sort((a, b) => a.title.localeCompare(b.title));
 }
-
-
-
-const otMeta = document.createElement('meta');
-otMeta.httpEquiv = 'origin-trial';
-otMeta.content = 'AkmkfDzmgfnMr7tEFkOtxDQSEJT7cvbDE8dFCzTCXVAIKqPkXBd8MqaNgEKBS+HT3xC8JU/5DmSug42IA9nDGgcAAABreyJvcmlnaW4iOiJodHRwczovL3d3dy53ZWJjb3JlLmxpdmU6NDQzIiwiZmVhdHVyZSI6IldlYkFwcFRhYlN0cmlwIiwiZXhwaXJ5IjoxNzE2OTQwNzk5LCJpc1N1YmRvbWFpbiI6dHJ1ZX0=';
-document.head.append(otMeta);
-
