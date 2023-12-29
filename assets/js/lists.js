@@ -1,6 +1,7 @@
 const LINK_CONTAINER_ID = "linksContainer";
 const LINK_DIALOG_ID = "linkAddingDialog";
 
+
 document.addEventListener("DOMContentLoaded", () => {
   loadLinks();
   // Attach event listener for toggleDeleteButtons (if needed)
@@ -29,12 +30,11 @@ function addLink() {
       return;
     }
 
-    const newLink = { title, url };
-    links.push(newLink);
+    links.push({ title, url });
     setStoredLinks(links);
 
     const linkContainer = getElement(LINK_CONTAINER_ID);
-    const linkDiv = createLinkContainer(newLink);
+    const linkDiv = createLinkContainer({ title, url });
 
     linkContainer.appendChild(linkDiv);
 
@@ -53,7 +53,7 @@ function createLinkContainer(link) {
 
   fetchIcon(link.url)
     .then((iconURL) => {
-      const icon = createIconElement(iconURL, link.title);
+      const icon = createIconElement(iconURL, link.title, link.url);
       linkDiv.insertBefore(icon, linkButton);
     })
     .catch((error) => {
@@ -63,24 +63,6 @@ function createLinkContainer(link) {
   linkDiv.appendChild(linkButton);
   return linkDiv;
 }
-
-function createIconElement(iconURL, title) {
-  const iconContainer = createElement("div", "icon-container");
-  const icon = createElement("img", "link-icon");
-
-  icon.src = iconURL;
-  icon.alt = `${title} Icon`;
-
-  icon.addEventListener("click", (event) => {
-    event.preventDefault();
-    redirectToLink(iconURL);
-  });
-
-  iconContainer.appendChild(icon);
-  return iconContainer;
-}
-
-// Other functions remain unchanged
 
 function createElement(tag, className, textContent) {
   const element = document.createElement(tag);
@@ -93,9 +75,76 @@ function createElement(tag, className, textContent) {
   return element;
 }
 
+// Update redirectToLink function
 function redirectToLink(url) {
+  // Record start time in localStorage
+  localStorage.setItem("startTime", JSON.stringify({ url, time: Date.now() }));
+
+  // Redirect to the link
   window.location.href = url;
 }
+
+// Listen for pagehide event (when the page is about to be hidden)
+window.addEventListener("pagehide", () => {
+  // Record the current time in localStorage
+  localStorage.setItem("pagehideTime", Date.now().toString());
+});
+
+// Listen for pageshow event (when the page becomes visible again)
+window.addEventListener("pageshow", (event) => {
+  // Check if the event's persisted attribute is false (indicating a real page reload)
+  if (!event.persisted) {
+    // Page is visible again, calculate time spent
+    const startTimeData = JSON.parse(localStorage.getItem("startTime"));
+
+    if (startTimeData) {
+      const { url, time } = startTimeData;
+      const pagehideTime = localStorage.getItem("pagehideTime");
+      const endTime = Date.now();
+      const timeSpent = pagehideTime ? endTime - Math.max(time, parseInt(pagehideTime, 10)) : 0;
+
+      // Update link usage with time spent
+      updateLinkUsage(url, timeSpent);
+
+      // Clear stored start time and pagehide time
+      localStorage.removeItem("startTime");
+      localStorage.removeItem("pagehideTime");
+    }
+  }
+});
+
+// Update updateLinkUsage function
+function updateLinkUsage(url, timeSpent) {
+  const linkUsageData = getLinkUsageData();
+
+  if (linkUsageData[url]) {
+    linkUsageData[url].count += 1;
+    linkUsageData[url].totalTimeSpent += timeSpent;
+    linkUsageData[url].lastAccessed = new Date().toISOString();
+  } else {
+    linkUsageData[url] = {
+      count: 1,
+      totalTimeSpent: timeSpent,
+      lastAccessed: new Date().toISOString(),
+    };
+  }
+
+  setLinkUsageData(linkUsageData);
+}
+
+
+
+
+function getLinkUsageData() {
+  return JSON.parse(localStorage.getItem("linkUsageData")) || {};
+}
+
+function setLinkUsageData(data) {
+  localStorage.setItem("linkUsageData", JSON.stringify(data));
+}
+
+
+
 
 function fetchIcon(url) {
   const urlWithoutProtocol = url.replace(/^https?:\/\//, "");
@@ -147,9 +196,7 @@ function getElement(elementId) {
 }
 
 function isDuplicateLink(links, newLink) {
-  return links.some(
-    (link) => link.title === newLink.title || link.url === newLink.url
-  );
+  return links.some((link) => link.title === newLink.title || link.url === newLink.url);
 }
 
 function getStoredLinks() {
@@ -159,6 +206,7 @@ function getStoredLinks() {
 function setStoredLinks(links) {
   localStorage.setItem("links", JSON.stringify(links));
 }
+
 
 function setDefaultLinks() {
   const defaultLinks = [
