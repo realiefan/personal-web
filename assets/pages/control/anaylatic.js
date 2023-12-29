@@ -31,7 +31,7 @@ function displayLinkAnalytics() {
       datasets: [
         {
           label: "Time Spent (s)",
-          data: top15Data.map((time) => time / 1000), // convert milliseconds to seconds
+          data: top15Data.map((time) => time / 100), // convert milliseconds to seconds
           backgroundColor: "rgba(75, 192, 192, 0.2)",
           borderColor: "rgba(75, 192, 192, 1)",
           borderWidth: 1,
