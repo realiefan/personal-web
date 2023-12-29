@@ -244,7 +244,6 @@ function setDefaultLinks() {
     },
     { id: "stacker-embed", url: "https://stacker.news/", title: "Stacker" },
     { id: "oddbean-embed", url: "https://oddbean.com/", title: "Oddbean" },
-    { title: "Hacker News ", url: "https://news.ycombinator.com/" },
     { title: "Brave", url: "https://search.brave.com/" },
     { title: "X", url: "https://twitter.com/" },
     { title: "Reddit", url: "https://www.reddit.com/" },
