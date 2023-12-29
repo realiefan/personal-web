@@ -1,264 +1,112 @@
-const LINK_CONTAINER_ID = "linksContainer";
-const LINK_DIALOG_ID = "linkAddingDialog";
-
 document.addEventListener("DOMContentLoaded", () => {
-  loadLinks();
-  // Attach event listener for toggleDeleteButtons (if needed)
+  displayLinkAnalytics();
 });
 
-function openLinkAddingDialog() {
-  getDialogElement().showModal();
-}
+function displayLinkAnalytics() {
+  const linkDetailsContentElement =
+    document.getElementById("linkDetailsContent");
+  const linkDetailsElement = document.getElementById("linkDetails");
 
-function closeLinkAddingDialog() {
-  getDialogElement().close();
-}
-
-function addLink() {
-  const titleInput = getElement("newLinkTitle");
-  const urlInput = getElement("newLinkURL");
-
-  const title = titleInput.value.trim();
-  const url = urlInput.value.trim();
-
-  if (isValidLink(title, url)) {
-    const links = getStoredLinks();
-
-    if (isDuplicateLink(links, { title, url })) {
-      alert("This link already exists.");
-      return;
-    }
-
-    links.push({ title, url });
-    setStoredLinks(links);
-
-    const linkContainer = getElement(LINK_CONTAINER_ID);
-    const linkDiv = createLinkContainer({ title, url });
-
-    linkContainer.appendChild(linkDiv);
-
-    clearInputFields(titleInput, urlInput);
-    closeLinkAddingDialog();
-  } else {
-    alert("Please enter both link title and URL");
-  }
-}
-
-function createLinkContainer(link) {
-  const linkDiv = createElement("div", "link-container");
-  const linkButton = createElement("button", "mainButton", link.title);
-
-  linkButton.addEventListener("click", () => redirectToLink(link.url));
-
-  fetchIcon(link.url)
-    .then((iconURL) => {
-      const icon = createIconElement(iconURL, link.title, link.url);
-      linkDiv.insertBefore(icon, linkButton);
-    })
-    .catch((error) => {
-      console.error("Error fetching icon:", error);
-    });
-
-  linkDiv.appendChild(linkButton);
-  return linkDiv;
-}
-
-function createElement(tag, className, textContent) {
-  const element = document.createElement(tag);
-  element.className = className;
-
-  if (textContent) {
-    element.textContent = textContent;
-  }
-
-  return element;
-}
-
-function redirectToLink(url) {
-  // Record start time in sessionStorage after a small delay
-  setTimeout(() => {
-    sessionStorage.setItem(
-      "startTime",
-      JSON.stringify({ url, time: Date.now() })
-    );
-  }, 100);
-
-  // Redirect to the link
-  window.location.href = url;
-}
-
-// Listen for beforeunload event (when the page is about to be unloaded)
-window.addEventListener("beforeunload", () => {
-  // Record the current time in sessionStorage
-  sessionStorage.setItem("pageUnloadTime", Date.now().toString());
-});
-
-// Calculate time spent when the page is loaded/reloaded
-document.addEventListener("DOMContentLoaded", () => {
-  const startTimeData = JSON.parse(sessionStorage.getItem("startTime"));
-
-  if (startTimeData) {
-    const { url, time } = startTimeData;
-    const pageUnloadTime = sessionStorage.getItem("pageUnloadTime");
-    const endTime = Date.now();
-    const timeSpent = pageUnloadTime
-      ? endTime - Math.max(time, parseInt(pageUnloadTime, 10))
-      : 0;
-
-    // Update link usage with time spent
-    updateLinkUsage(url, timeSpent);
-
-    // Clear stored start time and page unload time
-    sessionStorage.removeItem("startTime");
-    sessionStorage.removeItem("pageUnloadTime");
-  }
-});
-
-function updateLinkUsage(url, timeSpent) {
   const linkUsageData = getLinkUsageData();
-
-  if (linkUsageData[url]) {
-    // If the URL is already in the data, update the existing entry
-    linkUsageData[url].count += 1;
-    linkUsageData[url].totalTimeSpent += timeSpent;
-    linkUsageData[url].lastAccessed = new Date().toISOString();
-  } else {
-    // If the URL is not in the data, create a new entry
-    linkUsageData[url] = {
-      count: 1,
-      totalTimeSpent: timeSpent,
-      lastAccessed: new Date().toISOString(),
-    };
-  }
-
-  setLinkUsageData(linkUsageData);
-}
-
-
-// ... (unchanged)
-
-function getLinkUsageData() {
-  return JSON.parse(localStorage.getItem("linkUsageData")) || {};
-}
-
-function setLinkUsageData(data) {
-  localStorage.setItem("linkUsageData", JSON.stringify(data));
-}
-
-function fetchIcon(url) {
-  const urlWithoutProtocol = url.replace(/^https?:\/\//, "");
-  return Promise.resolve(`https://icon.horse/icon/${urlWithoutProtocol}`);
-}
-
-function loadLinks() {
-  const linkContainer = getElement(LINK_CONTAINER_ID);
-  let links = getStoredLinks();
-
-  if (!links || links.length === 0) {
-    links = setDefaultLinks();
-  }
-
-  sortLinksAlphabetically(links);
-
-  links.forEach((link) => {
-    const linkDiv = createLinkContainer(link);
-    linkContainer.appendChild(linkDiv);
-  });
-}
-
-function createIconElement(iconURL, title, url) {
-  const iconContainer = createElement("div", "icon-container");
-  const icon = createElement("img", "link-icon");
-
-  icon.src = iconURL;
-  icon.alt = `${title} Icon`;
-
-  icon.addEventListener("click", (event) => {
-    event.preventDefault();
-    redirectToLink(url);
-  });
-
-  iconContainer.appendChild(icon);
-  return iconContainer;
-}
-
-function isValidLink(title, url) {
-  return title && url;
-}
-
-function getDialogElement() {
-  return getElement(LINK_DIALOG_ID);
-}
-
-function getElement(elementId) {
-  return document.getElementById(elementId);
-}
-
-function isDuplicateLink(links, newLink) {
-  return links.some(
-    (link) => link.title === newLink.title || link.url === newLink.url
+  const labels = Object.keys(linkUsageData);
+  const data = Object.values(linkUsageData).map(
+    (usage) => usage.totalTimeSpent
   );
-}
+  const counts = Object.values(linkUsageData).map((usage) => usage.count);
 
-function getStoredLinks() {
-  return JSON.parse(localStorage.getItem("links")) || [];
-}
+  // Sort data based on time spent in descending order
+  const sortedData = data.slice().sort((a, b) => b - a);
 
-function setStoredLinks(links) {
-  localStorage.setItem("links", JSON.stringify(links));
-}
+  // Get the top 15 items for chart
+  const top15Data = sortedData.slice(0, 15);
+  const top15Labels = top15Data.map(
+    (timeSpent) => labels[data.indexOf(timeSpent)]
+  );
 
-function setDefaultLinks() {
-  const defaultLinks = [
-    { id: "bard-embed", url: "https://bard.google.com/", title: "Bard" },
-    { id: "habla-embed", url: "https://habla.news/", title: "Habla" },
-    {
-      id: "perplexity-embed",
-      url: "https://www.perplexity.ai/",
-      title: "Perplexity",
+  const ctx = document.getElementById("linkAnalyticsChart").getContext("2d");
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: top15Labels.map(getHostName),
+      datasets: [
+        {
+          label: "Time Spent (s)",
+          data: top15Data.map((time) => time / 1000), // convert milliseconds to seconds
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          borderWidth: 1,
+        },
+      ],
     },
-    { id: "archive-embed", url: "https://archive.org/", title: "Archive" },
-    {
-      id: "nostrbuild-embed",
-      url: "https://nostr.build/",
-      title: "Nostr.Build",
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+      plugins: {
+        legend: {
+          display: false,
+        },
+        datalabels: {
+          anchor: "end",
+          align: "top",
+          formatter: function (value, context) {
+            return counts[context.dataIndex];
+          },
+        },
+      },
     },
-    { id: "nostrband-embed", url: "https://nostr.band/", title: "Nostr.Band" },
-    {
-      id: "nostrudel-embed",
-      url: "https://nostrudel.ninja/",
-      title: "noStrudel",
-    },
-    {
-      id: "satellite-embed",
-      url: "https://satellite.earth/",
-      title: "Satellite",
-    },
-    { id: "stacker-embed", url: "https://stacker.news/", title: "Stacker" },
-    { id: "oddbean-embed", url: "https://oddbean.com/", title: "Oddbean" },
-    { title: "Brave", url: "https://search.brave.com/" },
-    { title: "X", url: "https://twitter.com/" },
-    { title: "Reddit", url: "https://www.reddit.com/" },
-    { title: "Wormhole", url: "https://wormhole.app/" },
-    { title: "GitHub", url: "https://github.com/" },
-    { title: "Memo Ai", url: "https://www.recordergo.app/" },
-    { title: "Wikipedia", url: "https://wikipedia.org/" },
-    { title: "Shopstr", url: "https://shopstr.store/" },
-    { title: "UnleashedChat ", url: "https://unleashed.chat/" },
-    { title: "ProtonMail", url: "https://mail.proton.me/" },
-    { title: "NostrApps", url: "https://nostrapp.link/" },
-    { title: "Rumble", url: "https://rumble.com/" },
-    { title: "BlueSky", url: "https://bsky.app/" },
-    { title: "Coracle", url: "https://coracle.social/" },
-    { title: "CallOfWar", url: "https://www.callofwar.com/" },
-    { title: "Snort", url: "https://Snort.social" },
-    { title: "ShipYard", url: "https://shipyard.pub/" },
-    { title: "Stream", url: "https://zap.stream/" },
-  ];
-  localStorage.setItem("links", JSON.stringify(defaultLinks));
-  return defaultLinks;
-}
+  });
 
-function sortLinksAlphabetically(links) {
-  links.sort((a, b) => a.title.localeCompare(b.title));
+  // Display all link details
+  linkDetailsContentElement.innerHTML = "";
+  labels.forEach((label, index) => {
+    const hostName = getHostName(label);
+    const opens = counts[index];
+    const timeSpent = formatTime(data[index]);
+
+    linkDetailsContentElement.innerHTML += `
+            <tr>
+                <td>${hostName}</td>
+                <td>${opens}</td>
+                <td>${timeSpent}</td>
+
+            </tr>`;
+  });
+
+  // Button to delete all link usage data
+  const deleteButton = document.getElementById("deleteButton");
+  deleteButton.addEventListener("click", () => {
+    localStorage.removeItem("linkUsageData");
+    linkDetailsContentElement.innerHTML = ""; // Clear the table
+    displayLinkAnalytics(); // Refresh the displayed data
+  });
+
+  function formatTime(milliseconds) {
+    const seconds = Math.floor(milliseconds / 1000);
+    return `${seconds} sec`;
+  }
+
+  function getLinkUsageData() {
+    return JSON.parse(localStorage.getItem("linkUsageData")) || {};
+  }
+
+  function getHostName(url) {
+    const match = url.match(
+      /^(?:https?:\/\/)?(?:www\.)?([^.\/]+)(?:\.[^.\/]+)*(?:\/|$)/
+    );
+    return match ? match[1] : url;
+  }
+
+  // Function to delete a specific link
+  window.deleteLink = function (url) {
+    const updatedLinkUsageData = getLinkUsageData();
+    delete updatedLinkUsageData[url];
+    setLinkUsageData(updatedLinkUsageData);
+
+    // Refresh the displayed data
+    linkDetailsContentElement.innerHTML = "";
+    displayLinkAnalytics();
+  };
 }

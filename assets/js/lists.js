@@ -87,34 +87,30 @@ function redirectToLink(url) {
   window.location.href = url;
 }
 
-// Listen for pagehide event (when the page is about to be hidden)
-window.addEventListener("pagehide", () => {
+// Listen for beforeunload event (when the page is about to be unloaded)
+window.addEventListener("beforeunload", () => {
   // Record the current time in sessionStorage
-  sessionStorage.setItem("pagehideTime", Date.now().toString());
+  sessionStorage.setItem("pageUnloadTime", Date.now().toString());
 });
 
-// Listen for pageshow event (when the page becomes visible again)
-window.addEventListener("pageshow", (event) => {
-  // Check if the event's persisted attribute is false (indicating a real page reload)
-  if (!event.persisted) {
-    // Page is visible again, calculate time spent
-    const startTimeData = JSON.parse(sessionStorage.getItem("startTime"));
+// Calculate time spent when the page is loaded/reloaded
+document.addEventListener("DOMContentLoaded", () => {
+  const startTimeData = JSON.parse(sessionStorage.getItem("startTime"));
 
-    if (startTimeData) {
-      const { url, time } = startTimeData;
-      const pagehideTime = sessionStorage.getItem("pagehideTime");
-      const endTime = Date.now();
-      const timeSpent = pagehideTime
-        ? endTime - Math.max(time, parseInt(pagehideTime, 10))
-        : 0;
+  if (startTimeData) {
+    const { url, time } = startTimeData;
+    const pageUnloadTime = sessionStorage.getItem("pageUnloadTime");
+    const endTime = Date.now();
+    const timeSpent = pageUnloadTime
+      ? endTime - Math.max(time, parseInt(pageUnloadTime, 10))
+      : 0;
 
-      // Update link usage with time spent
-      updateLinkUsage(url, timeSpent);
+    // Update link usage with time spent
+    updateLinkUsage(url, timeSpent);
 
-      // Clear stored start time and pagehide time
-      sessionStorage.removeItem("startTime");
-      sessionStorage.removeItem("pagehideTime");
-    }
+    // Clear stored start time and page unload time
+    sessionStorage.removeItem("startTime");
+    sessionStorage.removeItem("pageUnloadTime");
   }
 });
 
@@ -137,6 +133,7 @@ function updateLinkUsage(url, timeSpent) {
 
   setLinkUsageData(linkUsageData);
 }
+
 
 // ... (unchanged)
 
