@@ -1,7 +1,6 @@
 const LINK_CONTAINER_ID = "linksContainer";
 const LINK_DIALOG_ID = "linkAddingDialog";
 
-
 document.addEventListener("DOMContentLoaded", () => {
   loadLinks();
   // Attach event listener for toggleDeleteButtons (if needed)
@@ -141,8 +140,6 @@ function updateLinkUsage(url, timeSpent) {
 
 // ... (unchanged)
 
-
-
 function getLinkUsageData() {
   return JSON.parse(localStorage.getItem("linkUsageData")) || {};
 }
@@ -150,9 +147,6 @@ function getLinkUsageData() {
 function setLinkUsageData(data) {
   localStorage.setItem("linkUsageData", JSON.stringify(data));
 }
-
-
-
 
 function fetchIcon(url) {
   const urlWithoutProtocol = url.replace(/^https?:\/\//, "");
@@ -204,7 +198,9 @@ function getElement(elementId) {
 }
 
 function isDuplicateLink(links, newLink) {
-  return links.some((link) => link.title === newLink.title || link.url === newLink.url);
+  return links.some(
+    (link) => link.title === newLink.title || link.url === newLink.url
+  );
 }
 
 function getStoredLinks() {
@@ -214,7 +210,6 @@ function getStoredLinks() {
 function setStoredLinks(links) {
   localStorage.setItem("links", JSON.stringify(links));
 }
-
 
 function setDefaultLinks() {
   const defaultLinks = [
