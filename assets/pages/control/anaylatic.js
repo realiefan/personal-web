@@ -19,12 +19,13 @@ function displayLinkAnalytics() {
 
   // Get the top 15 items for chart
   const top15Data = sortedData.slice(0, 15);
+  const top15Labels = labels.slice(0, 15);
 
   const ctx = document.getElementById("linkAnalyticsChart").getContext("2d");
   new Chart(ctx, {
     type: "bar",
     data: {
-      labels: labels.slice(0, 15).map(getHostName),
+      labels: top15Labels.map(getHostName),
       datasets: [
         {
           label: "Time Spent (s)",
@@ -58,7 +59,7 @@ function displayLinkAnalytics() {
 
   // Display all link details
   linkDetailsContentElement.innerHTML = "";
-  labels.forEach((label, index) => {
+  top15Labels.forEach((label, index) => {
     const hostName = getHostName(label);
     const opens = counts[index];
     const timeSpent = formatTime(data[index]);
@@ -93,15 +94,11 @@ function displayLinkAnalytics() {
   }
 
   function getHostName(url) {
-    try {
-      const { hostname } = new URL(url);
-      return hostname.replace(/^www\./, ""); // Remove 'www.' if present
-    } catch (error) {
-      console.error("Error parsing URL:", error);
-      return url; // Return the original URL if parsing fails
-    }
+    const match = url.match(
+      /^(?:https?:\/\/)?(?:www\.)?([^.\/]+)(?:\.[^.\/]+)*(?:\/|$)/
+    );
+    return match ? match[1] : url;
   }
-
 
   // Function to delete a specific link
   window.deleteLink = function (url) {
