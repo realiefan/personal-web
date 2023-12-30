@@ -93,11 +93,15 @@ function displayLinkAnalytics() {
   }
 
   function getHostName(url) {
-    const match = url.match(
-      /^(?:https?:\/\/)?(?:www\.)?([^.\/]+)(?:\.[^.\/]+)*(?:\/|$)/
-    );
-    return match ? match[1] : url;
+    try {
+      const { hostname } = new URL(url);
+      return hostname.replace(/^www\./, ""); // Remove 'www.' if present
+    } catch (error) {
+      console.error("Error parsing URL:", error);
+      return url; // Return the original URL if parsing fails
+    }
   }
+
 
   // Function to delete a specific link
   window.deleteLink = function (url) {
