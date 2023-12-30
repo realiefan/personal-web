@@ -22,7 +22,7 @@ function displayLinkAnalytics() {
   new Chart(ctx, {
     type: "bar",
     data: {
-      labels: top15Labels.map(getHostName),
+      labels: top15Labels.map(getTitle), // Use getTitle instead of getHostName
       datasets: [
         {
           label: "Click Counts",
@@ -47,7 +47,7 @@ function displayLinkAnalytics() {
           anchor: "end",
           align: "top",
           formatter: function (value, context) {
-            return clickCounts[context.dataIndex] || 0; // Ensure that clickCounts is defined
+            return clickCounts[context.dataIndex] || 0;
           },
         },
       },
@@ -57,12 +57,12 @@ function displayLinkAnalytics() {
   // Display all link details
   linkDetailsContentElement.innerHTML = "";
   top15Labels.forEach((label, index) => {
-    const hostName = getHostName(label);
-    const clickCount = clickCounts[index] || 0; // Ensure that clickCounts is defined
+    const title = getTitle(label); // Use getTitle instead of getHostName
+    const clickCount = clickCounts[index] || 0;
 
     linkDetailsContentElement.innerHTML += `
             <tr>
-                <td>${hostName}</td>
+                <td>${title}</td>
                 <td>${clickCount}</td>
             </tr>`;
   });
@@ -70,9 +70,15 @@ function displayLinkAnalytics() {
   // Button to delete all link usage data
   const deleteButton = document.getElementById("deleteButton");
   deleteButton.addEventListener("click", () => {
-    localStorage.removeItem("linkUsageData");
-    linkDetailsContentElement.innerHTML = ""; // Clear the table
-    displayLinkAnalytics(); // Refresh the displayed data
+    const confirmation = window.confirm(
+      "Are you sure you want to delete all link usage data?"
+    );
+
+    if (confirmation) {
+      localStorage.removeItem("linkUsageData");
+      linkDetailsContentElement.innerHTML = "";
+      displayLinkAnalytics();
+    }
   });
 
   function getLinkUsageData() {
@@ -83,20 +89,16 @@ function displayLinkAnalytics() {
     localStorage.setItem("linkUsageData", JSON.stringify(data));
   }
 
-  function getHostName(url) {
-    const match = url.match(
-      /^(?:https?:\/\/)?(?:www\.)?([^.\/]+)(?:\.[^.\/]+)*(?:\/|$)/
-    );
-    return match ? match[1] : url;
+  function getTitle(url) {
+    const linkInfo = linkUsageData[url] || {};
+    return linkInfo.title || url; // Return title if available, otherwise return the URL
   }
 
-  // Function to delete a specific link
   window.deleteLink = function (url) {
     const updatedLinkUsageData = getLinkUsageData();
     delete updatedLinkUsageData[url];
     setLinkUsageData(updatedLinkUsageData);
 
-    // Refresh the displayed data
     linkDetailsContentElement.innerHTML = "";
     displayLinkAnalytics();
   };

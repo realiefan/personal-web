@@ -1,43 +1,48 @@
-const LINK_CONTAINER_ID = "linksContainer";
-const LINK_DIALOG_ID = "linkAddingDialog";
-
 document.addEventListener("DOMContentLoaded", () => {
+  // Load links from localStorage or add defaults
   loadLinks();
-  // Attach event listener for toggleDeleteButtons (if needed)
+
+  // Attach event listener for toggleDeleteButtons
 });
 
 function openLinkAddingDialog() {
-  getDialogElement().showModal();
+  document.getElementById("linkAddingDialog").showModal();
 }
 
 function closeLinkAddingDialog() {
-  getDialogElement().close();
+  document.getElementById("linkAddingDialog").close();
 }
 
 function addLink() {
-  const titleInput = getElement("newLinkTitle");
-  const urlInput = getElement("newLinkURL");
+  const title = document.getElementById("newLinkTitle").value;
+  const url = document.getElementById("newLinkURL").value;
 
-  const title = titleInput.value.trim();
-  const url = urlInput.value.trim();
+  if (title && url) {
+    const links = JSON.parse(localStorage.getItem("links")) || [];
 
-  if (isValidLink(title, url)) {
-    const links = getStoredLinks();
-
-    if (isDuplicateLink(links, { title, url })) {
+    // Check for duplicate links
+    const isDuplicate = links.some(
+      (link) => link.title === title || link.url === url
+    );
+    if (isDuplicate) {
       alert("This link already exists.");
       return;
     }
 
     links.push({ title, url });
-    setStoredLinks(links);
+    localStorage.setItem("links", JSON.stringify(links));
 
-    const linkContainer = getElement(LINK_CONTAINER_ID);
+    const linkContainer = document.getElementById("linksContainer");
+
     const linkDiv = createLinkContainer({ title, url });
 
     linkContainer.appendChild(linkDiv);
 
-    clearInputFields(titleInput, urlInput);
+    // Clear input fields
+    document.getElementById("newLinkTitle").value = "";
+    document.getElementById("newLinkURL").value = "";
+
+    // Close the modal
     closeLinkAddingDialog();
   } else {
     alert("Please enter both link title and URL");
@@ -45,108 +50,64 @@ function addLink() {
 }
 
 function createLinkContainer(link) {
-  const linkDiv = createElement("div", "link-container");
-  const linkButton = createElement("button", "mainButton", link.title);
+  const linkDiv = document.createElement("div");
+  linkDiv.className = "link-container";
 
-  linkButton.addEventListener("click", () => redirectToLink(link.url));
+  const linkButton = document.createElement("button");
+  linkButton.textContent = link.title;
+  linkButton.className = "mainButton";
 
+  linkButton.addEventListener("click", () => {
+    // Increment click count for the URL
+    updateLinkClickCount(link.url, link.title); // Pass title as additional information
+
+    // Redirect to the link URL
+    window.location.href = link.url;
+  });
+
+  linkDiv.appendChild(linkButton);
+
+  // Fetch icon and append it to the link container
   fetchIcon(link.url)
     .then((iconURL) => {
-      const icon = createIconElement(iconURL, link.title, link.url);
-      linkDiv.insertBefore(icon, linkButton);
+      const icon = document.createElement("img");
+      icon.src = iconURL;
+      icon.alt = `${link.title} Icon`;
+      icon.className = "link-icon";
+
+      // Modify the event listener for the icon
+      icon.addEventListener("click", (event) => {
+        event.preventDefault(); // Prevent the default behavior of following the link
+
+        // Increment click count for the URL
+        updateLinkClickCount(link.url, link.title); // Pass title as additional information
+
+        // Manually set the window location to the link's URL
+        window.location.href = link.url;
+      });
+
+      linkDiv.insertBefore(icon, linkButton); // Insert icon before the button
     })
     .catch((error) => {
       console.error("Error fetching icon:", error);
     });
 
-  linkDiv.appendChild(linkButton);
   return linkDiv;
 }
 
-function createElement(tag, className, textContent) {
-  const element = document.createElement(tag);
-  element.className = className;
-
-  if (textContent) {
-    element.textContent = textContent;
-  }
-
-  return element;
-}
-
-function redirectToLink(url) {
-  // Record start time using a session cookie with a delay
-  document.cookie = `startTime=${JSON.stringify({
-    url,
-    time: Date.now(),
-  })}; path=/;`;
-  setTimeout(() => {
-    // Redirect to the link after setting the session cookie
-    window.location.href = url;
-  }, 500); // Increase the delay to 500 milliseconds
-}
-
-// Use pagehide event instead of beforeunload for better mobile compatibility
-window.addEventListener("pagehide", () => {
-  // Record the current time in sessionStorage
-  sessionStorage.setItem("pageUnloadTime", Date.now().toString());
-});
-
-function calculateTimeSpent() {
-  // Retrieve the start time from the session cookie
-  const startTimeCookie = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("startTime="))
-    .split("=")[1];
-
-  if (startTimeCookie) {
-    const { url, time } = JSON.parse(startTimeCookie);
-    const pageUnloadTime = sessionStorage.getItem("pageUnloadTime");
-    const endTime = Date.now();
-
-    // Choose the appropriate time reference
-    const referenceTime = pageUnloadTime || time;
-
-    const timeSpent = endTime - Math.max(parseInt(referenceTime, 10), time);
-
-    // Update link usage with time spent
-    updateLinkUsage(url, timeSpent);
-
-    // Clear stored start time and page-related times
-    sessionStorage.removeItem("pageUnloadTime");
-  }
-}
-
-// Listen for the pageshow event (when the page becomes visible again)
-window.addEventListener("pageshow", (event) => {
-  // Check if the event's persisted attribute is false (indicating a real page reload)
-  if (!event.persisted) {
-    // Page is visible again, calculate time spent
-    calculateTimeSpent();
-  }
-});
-
-function updateLinkUsage(url, timeSpent) {
+function updateLinkClickCount(url, title) {
   const linkUsageData = getLinkUsageData();
-  const timeSpentInSeconds = timeSpent / 1000; // Convert milliseconds to seconds
+  const linkInfo = linkUsageData[url] || { count: 0, title: title };
 
-  if (linkUsageData[url]) {
-    // If the URL is already in the data, update the existing entry
-    linkUsageData[url].count += 1;
-    linkUsageData[url].totalTimeSpent += timeSpentInSeconds; // Save time in seconds
-    linkUsageData[url].lastAccessed = new Date().toISOString();
-  } else {
-    // If the URL is not in the data, create a new entry
-    linkUsageData[url] = {
-      count: 1,
-      totalTimeSpent: timeSpentInSeconds, // Save time in seconds
-      lastAccessed: new Date().toISOString(),
-    };
-  }
+  // Increment click count for the URL
+  linkInfo.count += 1;
 
+  // Update the link usage data in local storage
+  linkUsageData[url] = linkInfo;
   setLinkUsageData(linkUsageData);
 }
 
+// Add this function to your existing code
 function getLinkUsageData() {
   return JSON.parse(localStorage.getItem("linkUsageData")) || {};
 }
@@ -158,18 +119,17 @@ function setLinkUsageData(data) {
 
 
 
-
-
 function fetchIcon(url) {
-  const urlWithoutProtocol = url.replace(/^https?:\/\//, "");
-  return Promise.resolve(`https://icon.horse/icon/${urlWithoutProtocol}`);
+  const urlWithoutProtocol = url.replace(/^https?:\/\//, ""); // Remove "https://" or "http://"
+  const iconURL = `https://icon.horse/icon/${urlWithoutProtocol}`;
+  return Promise.resolve(iconURL);
 }
 
 function loadLinks() {
-  const linkContainer = getElement(LINK_CONTAINER_ID);
-  let links = getStoredLinks();
+  const linkContainer = document.getElementById("linksContainer");
+  let links = loadLinksFromLocalStorage();
 
-  if (!links || links.length === 0) {
+  if (links.length === 0) {
     links = setDefaultLinks();
   }
 
@@ -181,46 +141,8 @@ function loadLinks() {
   });
 }
 
-function createIconElement(iconURL, title, url) {
-  const iconContainer = createElement("div", "icon-container");
-  const icon = createElement("img", "link-icon");
-
-  icon.src = iconURL;
-  icon.alt = `${title} Icon`;
-
-  icon.addEventListener("click", (event) => {
-    event.preventDefault();
-    redirectToLink(url);
-  });
-
-  iconContainer.appendChild(icon);
-  return iconContainer;
-}
-
-function isValidLink(title, url) {
-  return title && url;
-}
-
-function getDialogElement() {
-  return getElement(LINK_DIALOG_ID);
-}
-
-function getElement(elementId) {
-  return document.getElementById(elementId);
-}
-
-function isDuplicateLink(links, newLink) {
-  return links.some(
-    (link) => link.title === newLink.title || link.url === newLink.url
-  );
-}
-
-function getStoredLinks() {
+function loadLinksFromLocalStorage() {
   return JSON.parse(localStorage.getItem("links")) || [];
-}
-
-function setStoredLinks(links) {
-  localStorage.setItem("links", JSON.stringify(links));
 }
 
 function setDefaultLinks() {
@@ -277,3 +199,9 @@ function setDefaultLinks() {
 function sortLinksAlphabetically(links) {
   links.sort((a, b) => a.title.localeCompare(b.title));
 }
+
+const otMeta = document.createElement("meta");
+otMeta.httpEquiv = "origin-trial";
+otMeta.content =
+  "AkmkfDzmgfnMr7tEFkOtxDQSEJT7cvbDE8dFCzTCXVAIKqPkXBd8MqaNgEKBS+HT3xC8JU/5DmSug42IA9nDGgcAAABreyJvcmlnaW4iOiJodHRwczovL3d3dy53ZWJjb3JlLmxpdmU6NDQzIiwiZmVhdHVyZSI6IldlYkFwcFRhYlN0cmlwIiwiZXhwaXJ5IjoxNzE2OTQwNzk5LCJpc1N1YmRvbWFpbiI6dHJ1ZX0=";
+document.head.append(otMeta);
