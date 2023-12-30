@@ -34,6 +34,7 @@ function displayLinkAnalytics() {
       ],
     },
     options: {
+      responsive: false, // Add this line
       scales: {
         y: {
           beginAtZero: true,
