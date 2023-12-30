@@ -75,41 +75,37 @@ function createElement(tag, className, textContent) {
 }
 
 function redirectToLink(url) {
-  // Record start time in sessionStorage after a small delay
+  // Record start time using a session cookie with a delay
+  document.cookie = `startTime=${JSON.stringify({
+    url,
+    time: Date.now(),
+  })}; path=/;`;
   setTimeout(() => {
-    sessionStorage.setItem(
-      "startTime",
-      JSON.stringify({ url, time: Date.now() })
-    );
-  }, 100); // Increase the delay to 100 milliseconds for mobile compatibility
-
-  // Redirect to the link
-  window.location.href = url;
+    // Redirect to the link after setting the session cookie
+    window.location.href = url;
+  }, 500); // Increase the delay to 500 milliseconds
 }
 
-// Listen for beforeunload event (when the page is about to be unloaded)
-window.addEventListener("beforeunload", () => {
+// Use pagehide event instead of beforeunload for better mobile compatibility
+window.addEventListener("pagehide", () => {
   // Record the current time in sessionStorage
   sessionStorage.setItem("pageUnloadTime", Date.now().toString());
 });
 
-// Use pagehide event instead of visibilitychange for better mobile compatibility
-window.addEventListener("pagehide", () => {
-  // Record the current time in sessionStorage
-  sessionStorage.setItem("pagehideTime", Date.now().toString());
-});
-
 function calculateTimeSpent() {
-  const startTimeData = JSON.parse(sessionStorage.getItem("startTime"));
+  // Retrieve the start time from the session cookie
+  const startTimeCookie = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("startTime="))
+    .split("=")[1];
 
-  if (startTimeData) {
-    const { url, time } = startTimeData;
+  if (startTimeCookie) {
+    const { url, time } = JSON.parse(startTimeCookie);
     const pageUnloadTime = sessionStorage.getItem("pageUnloadTime");
-    const pagehideTime = sessionStorage.getItem("pagehideTime");
     const endTime = Date.now();
 
     // Choose the appropriate time reference
-    const referenceTime = pageUnloadTime || pagehideTime || time;
+    const referenceTime = pageUnloadTime || time;
 
     const timeSpent = endTime - Math.max(parseInt(referenceTime, 10), time);
 
@@ -117,9 +113,7 @@ function calculateTimeSpent() {
     updateLinkUsage(url, timeSpent);
 
     // Clear stored start time and page-related times
-    sessionStorage.removeItem("startTime");
     sessionStorage.removeItem("pageUnloadTime");
-    sessionStorage.removeItem("pagehideTime");
   }
 }
 
@@ -160,6 +154,7 @@ function getLinkUsageData() {
 function setLinkUsageData(data) {
   localStorage.setItem("linkUsageData", JSON.stringify(data));
 }
+
 
 
 
