@@ -27,14 +27,14 @@ function displayLinkAnalytics() {
         {
           label: "Click Counts",
           data: top15ClickCounts,
-          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          backgroundColor: "rgba(75, 192, 192, 0.6)", // Adjust color transparency
           borderColor: "rgba(75, 192, 192, 1)",
           borderWidth: 1,
         },
       ],
     },
     options: {
-      responsive: false, // Add this line
+      responsive: true,
       scales: {
         y: {
           beginAtZero: true,
@@ -52,13 +52,43 @@ function displayLinkAnalytics() {
           },
         },
       },
+      tooltips: {
+        callbacks: {
+          label: function (tooltipItem, data) {
+            const label = data.labels[tooltipItem.index];
+            const value = data.datasets[0].data[tooltipItem.index];
+            return `${label}: ${value} clicks`;
+          },
+        },
+      },
+      title: {
+        display: true,
+        text: "Link Analytics", // Add a title to the chart
+        fontSize: 16,
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: "Links",
+            fontSize: 14,
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: "Click Counts",
+            fontSize: 14,
+          },
+        },
+      },
     },
   });
 
   // Display all link details
   linkDetailsContentElement.innerHTML = "";
   top15Labels.forEach((label, index) => {
-    const title = getTitle(label); // Use getTitle instead of getHostName
+    const title = getTitle(label);
     const clickCount = clickCounts[index] || 0;
 
     linkDetailsContentElement.innerHTML += `
@@ -92,7 +122,7 @@ function displayLinkAnalytics() {
 
   function getTitle(url) {
     const linkInfo = linkUsageData[url] || {};
-    return linkInfo.title || url; // Return title if available, otherwise return the URL
+    return linkInfo.title || url;
   }
 
   window.deleteLink = function (url) {
