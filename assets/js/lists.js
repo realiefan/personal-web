@@ -81,7 +81,7 @@ function redirectToLink(url) {
       "startTime",
       JSON.stringify({ url, time: Date.now() })
     );
-  }, 10);
+  }, 100); // Increase the delay to 100 milliseconds for mobile compatibility
 
   // Redirect to the link
   window.location.href = url;
@@ -93,12 +93,10 @@ window.addEventListener("beforeunload", () => {
   sessionStorage.setItem("pageUnloadTime", Date.now().toString());
 });
 
-// Listen for visibilitychange event (when the page becomes visible or hidden)
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") {
-    // Record the current time in sessionStorage
-    sessionStorage.setItem("pagehideTime", Date.now().toString());
-  }
+// Use pagehide event instead of visibilitychange for better mobile compatibility
+window.addEventListener("pagehide", () => {
+  // Record the current time in sessionStorage
+  sessionStorage.setItem("pagehideTime", Date.now().toString());
 });
 
 function calculateTimeSpent() {
@@ -162,8 +160,6 @@ function getLinkUsageData() {
 function setLinkUsageData(data) {
   localStorage.setItem("linkUsageData", JSON.stringify(data));
 }
-
-
 
 
 
