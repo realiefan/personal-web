@@ -81,7 +81,7 @@ function redirectToLink(url) {
       "startTime",
       JSON.stringify({ url, time: Date.now() })
     );
-  }, 100);
+  }, 10);
 
   // Redirect to the link
   window.location.href = url;
@@ -165,15 +165,6 @@ function setLinkUsageData(data) {
 
 
 
-// ... (unchanged)
-
-function getLinkUsageData() {
-  return JSON.parse(localStorage.getItem("linkUsageData")) || {};
-}
-
-function setLinkUsageData(data) {
-  localStorage.setItem("linkUsageData", JSON.stringify(data));
-}
 
 
 
