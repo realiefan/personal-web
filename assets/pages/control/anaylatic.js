@@ -5,100 +5,57 @@ document.addEventListener("DOMContentLoaded", () => {
 function displayLinkAnalytics() {
   const linkDetailsContentElement =
     document.getElementById("linkDetailsContent");
-  const linkDetailsElement = document.getElementById("linkDetails");
+  const linkAnalyticsChartElement =
+    document.getElementById("linkAnalyticsChart");
 
   const linkUsageData = getLinkUsageData();
   const labels = Object.keys(linkUsageData);
   const clickCounts = Object.values(linkUsageData).map((usage) => usage.count);
 
   // Sort data based on click counts in descending order
-  const sortedClickCounts = clickCounts.slice().sort((a, b) => b - a);
+  const sortedData = labels
+    .map((label, index) => ({ label, clickCount: clickCounts[index] }))
+    .sort((a, b) => b.clickCount - a.clickCount);
 
-  // Get the top 15 items for chart
-  const top15ClickCounts = sortedClickCounts.slice(0, 15);
-  const top15Labels = labels.slice(0, 15);
+  // Get the top 15 items for the chart
+  const top15Data = sortedData.slice(0, 15);
 
-  const ctx = document.getElementById("linkAnalyticsChart").getContext("2d");
+  const chartData = {
+    labels: top15Data.map((item) => getTitle(item.label)),
+    datasets: [
+      {
+        label: "Click Counts",
+        data: top15Data.map((item) => item.clickCount),
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        beginAtZero: true,
+      },
+    },
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
+  };
+
+  const ctx = linkAnalyticsChartElement.getContext("2d");
   new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: top15Labels.map(getTitle), // Use getTitle instead of getHostName
-      datasets: [
-        {
-          label: "Click Counts",
-          data: top15ClickCounts,
-          backgroundColor: "rgba(75, 192, 192, 0.6)", // Adjust color transparency
-          borderColor: "rgba(75, 192, 192, 1)",
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      responsive: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-        },
-      },
-      plugins: {
-        legend: {
-          display: false,
-        },
-        datalabels: {
-          anchor: "end",
-          align: "top",
-          formatter: function (value, context) {
-            return clickCounts[context.dataIndex] || 0;
-          },
-        },
-      },
-      tooltips: {
-        callbacks: {
-          label: function (tooltipItem, data) {
-            const label = data.labels[tooltipItem.index];
-            const value = data.datasets[0].data[tooltipItem.index];
-            return `${label}: ${value} clicks`;
-          },
-        },
-      },
-      title: {
-        display: true,
-        text: "Link Analytics", // Add a title to the chart
-        fontSize: 16,
-      },
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: "Links",
-            fontSize: 14,
-          },
-        },
-        y: {
-          title: {
-            display: true,
-            text: "Click Counts",
-            fontSize: 14,
-          },
-        },
-      },
-    },
+    type: "bar", // Change the chart type to "bar"
+    data: chartData,
+    options: chartOptions,
   });
 
-  // Display all link details
-  linkDetailsContentElement.innerHTML = "";
-  top15Labels.forEach((label, index) => {
-    const title = getTitle(label);
-    const clickCount = clickCounts[index] || 0;
-
-    linkDetailsContentElement.innerHTML += `
-            <tr>
-                <td>${title}</td>
-                <td>${clickCount}</td>
-            </tr>`;
-  });
-
-  // Button to delete all link usage data
+  // Set up the delete button
   const deleteButton = document.getElementById("deleteButton");
   deleteButton.addEventListener("click", () => {
     const confirmation = window.confirm(
@@ -106,18 +63,18 @@ function displayLinkAnalytics() {
     );
 
     if (confirmation) {
+      // Clear link usage data from localStorage
       localStorage.removeItem("linkUsageData");
+
+      // Clear link details content and refresh analytics
       linkDetailsContentElement.innerHTML = "";
       displayLinkAnalytics();
     }
   });
 
+  // Helper functions
   function getLinkUsageData() {
     return JSON.parse(localStorage.getItem("linkUsageData")) || {};
-  }
-
-  function setLinkUsageData(data) {
-    localStorage.setItem("linkUsageData", JSON.stringify(data));
   }
 
   function getTitle(url) {
@@ -133,4 +90,8 @@ function displayLinkAnalytics() {
     linkDetailsContentElement.innerHTML = "";
     displayLinkAnalytics();
   };
+
+  function setLinkUsageData(data) {
+    localStorage.setItem("linkUsageData", JSON.stringify(data));
+  }
 }
