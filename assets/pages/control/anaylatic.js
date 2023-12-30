@@ -9,16 +9,13 @@ function displayLinkAnalytics() {
 
   const linkUsageData = getLinkUsageData();
   const labels = Object.keys(linkUsageData);
-  const data = Object.values(linkUsageData).map(
-    (usage) => usage.totalTimeSpent
-  );
-  const counts = Object.values(linkUsageData).map((usage) => usage.count);
+  const clickCounts = Object.values(linkUsageData).map((usage) => usage.count);
 
-  // Sort data based on time spent in descending order
-  const sortedData = data.slice().sort((a, b) => b - a);
+  // Sort data based on click counts in descending order
+  const sortedClickCounts = clickCounts.slice().sort((a, b) => b - a);
 
   // Get the top 15 items for chart
-  const top15Data = sortedData.slice(0, 15);
+  const top15ClickCounts = sortedClickCounts.slice(0, 15);
   const top15Labels = labels.slice(0, 15);
 
   const ctx = document.getElementById("linkAnalyticsChart").getContext("2d");
@@ -28,8 +25,8 @@ function displayLinkAnalytics() {
       labels: top15Labels.map(getHostName),
       datasets: [
         {
-          label: "Time Spent (s)",
-          data: top15Data.map((time) => time / 1), // convert milliseconds to seconds
+          label: "Click Counts",
+          data: top15ClickCounts,
           backgroundColor: "rgba(75, 192, 192, 0.2)",
           borderColor: "rgba(75, 192, 192, 1)",
           borderWidth: 1,
@@ -50,7 +47,7 @@ function displayLinkAnalytics() {
           anchor: "end",
           align: "top",
           formatter: function (value, context) {
-            return counts[context.dataIndex];
+            return clickCounts[context.dataIndex] || 0; // Ensure that clickCounts is defined
           },
         },
       },
@@ -61,14 +58,12 @@ function displayLinkAnalytics() {
   linkDetailsContentElement.innerHTML = "";
   top15Labels.forEach((label, index) => {
     const hostName = getHostName(label);
-    const opens = counts[index];
-    const timeSpent = formatTime(data[index]);
+    const clickCount = clickCounts[index] || 0; // Ensure that clickCounts is defined
 
     linkDetailsContentElement.innerHTML += `
             <tr>
                 <td>${hostName}</td>
-                <td>${opens}</td>
-                <td>${timeSpent}</td>
+                <td>${clickCount}</td>
             </tr>`;
   });
 
@@ -79,11 +74,6 @@ function displayLinkAnalytics() {
     linkDetailsContentElement.innerHTML = ""; // Clear the table
     displayLinkAnalytics(); // Refresh the displayed data
   });
-
-  function formatTime(milliseconds) {
-    const seconds = Math.floor(milliseconds / 1);
-    return `${seconds} sec`;
-  }
 
   function getLinkUsageData() {
     return JSON.parse(localStorage.getItem("linkUsageData")) || {};
