@@ -87,48 +87,67 @@ function redirectToLink(url) {
   window.location.href = url;
 }
 
-// Listen for pagehide event (when the page is about to be hidden)
-window.addEventListener("pagehide", () => {
+// Listen for beforeunload event (when the page is about to be unloaded)
+window.addEventListener("beforeunload", () => {
   // Record the current time in sessionStorage
-  sessionStorage.setItem("pagehideTime", Date.now().toString());
+  sessionStorage.setItem("pageUnloadTime", Date.now().toString());
 });
 
-// Listen for pageshow event (when the page becomes visible again)
+// Listen for visibilitychange event (when the page becomes visible or hidden)
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") {
+    // Record the current time in sessionStorage
+    sessionStorage.setItem("pagehideTime", Date.now().toString());
+  }
+});
+
+function calculateTimeSpent() {
+  const startTimeData = JSON.parse(sessionStorage.getItem("startTime"));
+
+  if (startTimeData) {
+    const { url, time } = startTimeData;
+    const pageUnloadTime = sessionStorage.getItem("pageUnloadTime");
+    const pagehideTime = sessionStorage.getItem("pagehideTime");
+    const endTime = Date.now();
+
+    // Choose the appropriate time reference
+    const referenceTime = pageUnloadTime || pagehideTime || time;
+
+    const timeSpent = endTime - Math.max(parseInt(referenceTime, 10), time);
+
+    // Update link usage with time spent
+    updateLinkUsage(url, timeSpent);
+
+    // Clear stored start time and page-related times
+    sessionStorage.removeItem("startTime");
+    sessionStorage.removeItem("pageUnloadTime");
+    sessionStorage.removeItem("pagehideTime");
+  }
+}
+
+// Listen for the pageshow event (when the page becomes visible again)
 window.addEventListener("pageshow", (event) => {
   // Check if the event's persisted attribute is false (indicating a real page reload)
   if (!event.persisted) {
     // Page is visible again, calculate time spent
-    const startTimeData = JSON.parse(sessionStorage.getItem("startTime"));
-
-    if (startTimeData) {
-      const { url } = startTimeData;
-      const pagehideTime = sessionStorage.getItem("pagehideTime");
-      const endTime = Date.now();
-      const timeSpent = pagehideTime
-        ? endTime - Math.max(startTimeData.time, parseInt(pagehideTime, 10))
-        : 0;
-
-      // Update link usage without requiring refresh
-      updateLinkUsage(url, timeSpent);
-
-      // Clear stored start time and pagehide time
-      sessionStorage.removeItem("startTime");
-      sessionStorage.removeItem("pagehideTime");
-    }
+    calculateTimeSpent();
   }
 });
 
 function updateLinkUsage(url, timeSpent) {
   const linkUsageData = getLinkUsageData();
+  const timeSpentInSeconds = timeSpent / 1000; // Convert milliseconds to seconds
 
   if (linkUsageData[url]) {
     // If the URL is already in the data, update the existing entry
     linkUsageData[url].count += 1;
+    linkUsageData[url].totalTimeSpent += timeSpentInSeconds; // Save time in seconds
     linkUsageData[url].lastAccessed = new Date().toISOString();
   } else {
     // If the URL is not in the data, create a new entry
     linkUsageData[url] = {
       count: 1,
+      totalTimeSpent: timeSpentInSeconds, // Save time in seconds
       lastAccessed: new Date().toISOString(),
     };
   }
@@ -136,15 +155,14 @@ function updateLinkUsage(url, timeSpent) {
   setLinkUsageData(linkUsageData);
 }
 
-// ... (unchanged)
-
 function getLinkUsageData() {
-  return JSON.parse(sessionStorage.getItem("linkUsageData")) || {};
+  return JSON.parse(localStorage.getItem("linkUsageData")) || {};
 }
 
 function setLinkUsageData(data) {
-  sessionStorage.setItem("linkUsageData", JSON.stringify(data));
+  localStorage.setItem("linkUsageData", JSON.stringify(data));
 }
+
 
 
 // ... (unchanged)
