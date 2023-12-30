@@ -40,10 +40,11 @@
 
         .deleteButton {
             font-weight: 600;
-            background-color: rgb(149, 13, 13);
+            background-color: rgb(159, 21, 21);
             color: #c1c0c0;
-            font-size: smaller;
+            font-size: 10px;
             padding: 2px 4px;
+
         }
 
         #linkDetails table {
@@ -70,11 +71,12 @@
             <div class="col">
                 <div class="text-center">
                     <h5 class="card-title">
-                        <button class="deleteButton " id="deleteButton">
-                            Delete Usage Data
-                        </button>
+                        
                         
                     </h5>
+                    <button class="deleteButton " id="deleteButton">
+                        Delete Analytics
+                    </button>
                     <div class="link-details" id="linkDetails">
                         <table class="table table-dark rounded">
                             <thead>
@@ -88,9 +90,7 @@
                             <tbody id="linkDetailsContent"></tbody>
                             
                         </table>
-                        <button class="deleteButton " id="deleteButton">
-                            Delete Usage Data
-                        </button>
+
                     </div>
                 </div>
             </div>
@@ -155,9 +155,10 @@
     </dialog>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.8.0/dist/chart.min.js"></script>
-    <script
-        src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <!-- Add these script tags to include Chart.js and the plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
     <script src="/assets/pages/control/anaylatic.js"></script>
     
     <script>
@@ -178,7 +179,8 @@
  
 
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     
 
     
