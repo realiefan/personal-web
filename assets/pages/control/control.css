@@ -147,7 +147,7 @@ button {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #131314;
     color: #d6d5d5;
-    padding: 8px 8px;
+    padding: 6px 8px;
     border: none;
     cursor: pointer;
     font-size: 15px;
@@ -276,28 +276,29 @@ input:focus::placeholder {
     border-radius: 8px;
     max-width: 300px;
     
-    padding: 44px;
+    padding: 34px;
     z-index: 1000;
     text-align: center;
     
 }
 
-#downloadDataButton, #restoreDataButton, #Cancel {
+#downloadDataButton, #restoreDataButton {
     margin-bottom: 10px;
-    font-size: 25px;
+    font-size: 15px;
     margin: 5px;
+    background: linear-gradient(90deg, #5e5cd5, #226ed2 100%, #126ce1 0);
 }
 
-
+#Cancel {
+margin-top: 20px;
+    font-size: 15px;
+    margin: 5px;
+    
+}
 
 .createAc {
     color: #5e5cd5;
 }
-
-
-
-
-
 
 
 @keyframes slideUp {

@@ -11,14 +11,21 @@ function displayLinkAnalytics() {
   const linkUsageData = getLinkUsageData();
   const labels = Object.keys(linkUsageData);
   const clickCounts = Object.values(linkUsageData).map((usage) => usage.count);
+  const performances = Object.values(linkUsageData).map(
+    (usage) => usage.performance
+  );
 
   // Sort data based on click counts in descending order
   const sortedData = labels
-    .map((label, index) => ({ label, clickCount: clickCounts[index] }))
+    .map((label, index) => ({
+      label,
+      clickCount: clickCounts[index],
+      performance: performances[index],
+    }))
     .sort((a, b) => b.clickCount - a.clickCount);
 
   // Get the top 15 items for the chart
-  const top15Data = sortedData.slice(0, 15);
+  const top15Data = sortedData.slice(0, 10);
 
   const chartData = {
     labels: top15Data.map((item) => getTitle(item.label)),
@@ -29,6 +36,7 @@ function displayLinkAnalytics() {
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
+        yAxisID: "primaryY",
       },
     ],
   };
@@ -40,17 +48,49 @@ function displayLinkAnalytics() {
       x: {
         beginAtZero: true,
       },
+      primaryY: {
+        type: "linear",
+        position: "left",
+        beginAtZero: true,
+      },
     },
     plugins: {
       legend: {
-        display: false,
+        position: "false",
+      },
+      tooltip: {
+        mode: "index",
+        intersect: false,
+        callbacks: {
+          label: function (context) {
+            const label = context.dataset.label || "";
+            const value = context.parsed.y || 0;
+            const url = sortedData[context.dataIndex].label;
+
+            const linkInfo = linkUsageData[url] || {};
+            const performance = linkInfo.performance
+              ? Math.round(linkInfo.performance) + " ms"
+              : "N/A";
+
+            // Format lastAccessTime to show only the date
+            const lastAccessTime = linkInfo.lastAccessTime
+              ? new Date(linkInfo.lastAccessTime).toLocaleDateString()
+              : "N/A";
+
+            return [
+              `${label}: ${value} clicks`,
+              `Time to load: ${performance}`,
+              `Last Access: ${lastAccessTime}`,
+            ];
+          },
+        },
       },
     },
   };
 
   const ctx = linkAnalyticsChartElement.getContext("2d");
-  new Chart(ctx, {
-    type: "bar", // Change the chart type to "bar"
+  const chart = new Chart(ctx, {
+    type: "bar",
     data: chartData,
     options: chartOptions,
   });

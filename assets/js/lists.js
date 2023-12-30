@@ -97,15 +97,29 @@ function createLinkContainer(link) {
 
 function updateLinkClickCount(url, title) {
   const linkUsageData = getLinkUsageData();
-  const linkInfo = linkUsageData[url] || { count: 0, title: title };
+  const linkInfo = linkUsageData[url] || {
+    count: 0,
+    title: title,
+    lastAccessTime: null,
+    performance: null,
+  };
 
   // Increment click count for the URL
   linkInfo.count += 1;
+
+  // Update the latest access time
+  linkInfo.lastAccessTime = new Date().toISOString();
+
+  // Measure performance using the Performance API
+  if (window.performance && window.performance.now) {
+    linkInfo.performance = window.performance.now();
+  }
 
   // Update the link usage data in local storage
   linkUsageData[url] = linkInfo;
   setLinkUsageData(linkUsageData);
 }
+
 
 // Add this function to your existing code
 function getLinkUsageData() {
