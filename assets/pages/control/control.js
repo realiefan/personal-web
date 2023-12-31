@@ -199,28 +199,15 @@ function restoreData() {
 }
 
 
-document.getElementById('createFolderButton').addEventListener('click', createFolderAndSaveData);
+document.getElementById('downloadDataButton').addEventListener('click', downloadData);
 
-async function createFolderAndSaveData() {
-  try {
-    const fileHandle = await window.showDirectoryPicker();
-    const folderHandle = await fileHandle.getDirectoryHandle('YourFolderName', { create: true });
-    
-    // Access local storage data (assuming it's a key-value pair)
-    const localStorageData = { ...localStorage };
+function downloadData() {
+  const localStorageData = { ...localStorage };
+  const jsonString = JSON.stringify(localStorageData, null, 2);
 
-    // Create a file inside the folder
-    const fileHandleInFolder = await folderHandle.getFileHandle('localStorageData.json', { create: true });
-    const writable = await fileHandleInFolder.createWritable();
-
-    // Write the data as JSON
-    await writable.write(JSON.stringify(localStorageData, null, 2));
-
-    // Close the writable stream
-    await writable.close();
-
-    console.log('Data saved to folder as JSON successfully.');
-  } catch (error) {
-    console.error('Error:', error);
-  }
+  const blob = new Blob([jsonString], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'localStorageData.json';
+  link.click();
 }
