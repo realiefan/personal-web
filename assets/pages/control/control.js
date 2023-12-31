@@ -211,3 +211,9 @@ function downloadData() {
   link.download = 'localStorageData.json';
   link.click();
 }
+
+
+function openLink() {
+  // Replace 'your-link-url' with the actual URL you want to open
+  window.location.href = "/";
+}

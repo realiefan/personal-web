@@ -18,6 +18,8 @@
             color: #fff;
             padding: 10px;
             box-shadow: 0 5px 7px rgba(0, 0, 0, 0.35);
+          margin: 5%;
+          margin-top: 12%;
         }
 
         .table {
@@ -57,11 +59,12 @@
 
     
     <div class="container">
-        <div class="SubHeading">
-            <a>ScreenTime</a>
-        </div>
+     
     
         <div class="card">
+            <div class="SubHeading">
+                <a>ScreenTime</a>
+            </div>
             <div class="row">
                 <div class="col-md-10">
                     <canvas id="linkAnalyticsChart" width="400" height="200"></canvas>
@@ -102,10 +105,11 @@
     <div>
         
         
-        <div class="SubHeading">
-            <a>Edit AppList</a>
-        </div>
+        
         <div class="card">
+            <div class="SubHeading">
+                <a>Edit AppList</a>
+            </div>
         <section id="linksContainer">
             <!-- Links will be dynamically added here -->
         </section>
@@ -129,15 +133,17 @@
     </div>
 
 
-    <button id="homeButton" class="goHomeButton" onclick="goHome()">
-        <i data-lucide="x-circle" class="menu-icon"></i>
-    </button>
+    <div class="home-container">
+        <button id="homeButton" onclick="openLink()">
+            <i data-lucide="arrow-left-circle" class="menu-icon"></i>
+        </button>
+    </div>
     
 
     <dialog id="linkAddingDialog" class="linkAddingDialog">
         <div class="modal-subheading">You can add your custom web apps here, and 
-            they will be displayed on the homepage. Your list will be stored locally.. 
-            <br> <br>IYou can also explore latest Nostr webApp on <a class="createAc"
+            they will be displayed on the homepage. Your list will be stored locally. 
+            <br> <br>You can also explore latest Nostr App on <a class="createAc"
                 href="https://nostrapp.link/">NostrApps</a></p>
         </div>
         <div>

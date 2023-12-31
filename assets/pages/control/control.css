@@ -47,7 +47,7 @@ body {
     position: relative;
 
     margin: 5%;
-    margin-top: 0.7em;
+    margin-top: 1px;
     left: 0;
     top: 0;
     /* Apply the linear gradient to the text content of the logo */
@@ -56,10 +56,29 @@ body {
     color: transparent;
     border: none;
     cursor: pointer;
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 600;
     animation: fade-in 1s ease-in-out;
 }
+
+.SubHeadingLarge {
+        font-family: Google Sans, Helvetica Neue, sans-serif;
+        position: relative;
+
+        margin: 5%;
+        margin-top: 1px;
+
+        top: 0;
+        /* Apply the linear gradient to the text content of the logo */
+        background: linear-gradient(90deg, #7f7dd1, #548dd9 100%, #548dd9 0);
+        -webkit-background-clip: text;
+        color: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        font-weight: 600;
+        animation: fade-in 1s ease-in-out;
+    }
 
 
 #linksContainer {
@@ -134,20 +153,27 @@ body {
     padding: 4px;
 }
 
-#homeButton {
-    background: linear-gradient(90deg, #7f7dd1, #548dd9 100%, #548dd9 0);
+.home-container {
     position: absolute;
-    font-size: 0px;
-        margin: 5%;
-        
-        right: 0;
-        top: 0;
-        padding: 0px;
-        border-radius: 9999px;
-        animation: fade-in 1s ease-in-out;
-        color: #212121;
-        
-    
+    margin: 1em 2em;
+    left: 0;
+    top: 0;
+    color: #d8dee9;
+    border: none;
+    cursor: pointer;
+
+}
+
+#homeButton {
+    padding: 0px;
+    cursor: pointer;
+    background-color: #212121;
+    color: #121212;
+    border: none;
+    border-radius: 9999px;
+    outline: none;
+    transition: background-color 0.3s;
+    color: #7f7dd1;
 }
 
 button {
