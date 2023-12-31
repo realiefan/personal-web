@@ -214,39 +214,3 @@ function sortLinksAlphabetically(links) {
   links.sort((a, b) => a.title.localeCompare(b.title));
 }
 
-// Function to create a folder and save local storage data
-async function createFolderAndSaveData() {
-  try {
-    if (!("showDirectoryPicker" in window)) {
-      console.error("File System Access API not supported");
-      return;
-    }
-
-    const dirHandle = await window.showDirectoryPicker({ create: true });
-    const folderHandle = await dirHandle.getDirectoryHandle("my-app-data");
-
-    // Retrieve and validate local storage data
-    const localStorageData = {};
-    for (const key in localStorage) {
-      const value = localStorage.getItem(key);
-      // Perform validation if needed
-      localStorageData[key] = value;
-    }
-
-    for (const key in localStorageData) {
-      const fileHandle = await folderHandle.createWritable(`${key}.txt`);
-      const writableStream = await fileHandle.createWritable();
-      const writer = writableStream.getWriter();
-      writer.write(localStorageData[key]);
-      await writer.close();
-    }
-
-    console.log("Data saved successfully");
-  } catch (error) {
-    console.error("Error:", error);
-    // Handle errors gracefully, inform the user if needed
-  }
-}
-
-// Trigger the function after a button click (user-initiated)
-document.getElementById("save-data-button").addEventListener("click", createFolderAndSaveData);
