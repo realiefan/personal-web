@@ -217,3 +217,101 @@ function openLink() {
   // Replace 'your-link-url' with the actual URL you want to open
   window.location.href = "/";
 }
+
+
+function openIndexedDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('WebCore', 7);
+
+    request.onupgradeneeded = function (event) {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains("backup")) {
+        db.createObjectStore("backup", { keyPath: "key" });
+      }
+    };
+
+    request.onsuccess = function (event) {
+      resolve(event.target.result);
+    };
+
+    request.onerror = function (event) {
+      reject(event.target.error);
+    };
+  });
+}
+
+// Function to sync data from Local Storage to IndexedDB with daily versioning
+async function syncLocalStorageToIndexedDB() {
+  try {
+    // Open or create IndexedDB
+    const db = await openIndexedDB();
+
+    // Get the current date
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set time to the start of the day
+
+    // Check if a version exists for today
+    const versionKey = today.getTime();
+    const existingVersion = await new Promise((resolve, reject) => {
+      const getRequest = db.transaction('backup').objectStore('backup').get(versionKey);
+      getRequest.onsuccess = function (event) {
+        resolve(event.target.result);
+      };
+      getRequest.onerror = function (event) {
+        reject(event.target.error);
+      };
+    });
+
+    // If a version already exists for today, update it with current data
+    if (existingVersion) {
+      const localStorageData = {
+        linkUsageData: localStorage.getItem("linkUsageData") || '{}',
+        walletData: localStorage.getItem("walletData") || '{}',
+        links: localStorage.getItem("links") || '[]',
+      };
+
+      existingVersion.value = localStorageData;
+      await new Promise((resolve, reject) => {
+        const updateRequest = db.transaction('backup', 'readwrite').objectStore('backup').put(existingVersion);
+        updateRequest.onsuccess = function () {
+          resolve();
+        };
+        updateRequest.onerror = function (event) {
+          reject(event.target.error);
+        };
+      });
+
+      console.log('Backup version updated.');
+    } else {
+      // Add new data from local storage to IndexedDB with timestamp for versioning
+      const timestamp = new Date().getTime();
+      const localStorageData = {
+        linkUsageData: localStorage.getItem("linkUsageData") || '{}',
+        walletData: localStorage.getItem("walletData") || '{}',
+        links: localStorage.getItem("links") || '[]',
+      };
+
+      await new Promise((resolve, reject) => {
+        const addRequest = db.transaction('backup', 'readwrite').objectStore('backup').add({ key: versionKey, value: localStorageData });
+        addRequest.onsuccess = function () {
+          resolve();
+        };
+        addRequest.onerror = function (event) {
+          reject(event.target.error);
+        };
+      });
+
+      console.log('New backup version created for today.');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+// Call the sync function initially
+syncLocalStorageToIndexedDB();
+
+// Set up a timer to periodically check for changes in Local Storage
+setInterval(function () {
+  syncLocalStorageToIndexedDB();
+}, 5000); // Adjust the interval (in milliseconds) as needed
