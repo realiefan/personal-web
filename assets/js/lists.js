@@ -61,8 +61,8 @@ function createLinkContainer(link) {
     // Increment click count for the URL
     updateLinkClickCount(link.url, link.title); // Pass title as additional information
 
-    // Redirect to the link URL
-    window.location.href = link.url;
+    // Open the link URL in a new window
+    window.open(link.url, "_self");
   });
 
   linkDiv.appendChild(linkButton);
@@ -82,8 +82,8 @@ function createLinkContainer(link) {
         // Increment click count for the URL
         updateLinkClickCount(link.url, link.title); // Pass title as additional information
 
-        // Manually set the window location to the link's URL
-        window.location.href = link.url;
+        // Open the link URL in a new window
+        window.open(link.url, "_self");
       });
 
       linkDiv.insertBefore(icon, linkButton); // Insert icon before the button
@@ -118,8 +118,6 @@ function updateLinkClickCount(url, title) {
   setLinkUsageData(linkUsageData);
 }
 
-
-
 // Add this function to your existing code
 function getLinkUsageData() {
   return JSON.parse(localStorage.getItem("linkUsageData")) || {};
@@ -128,9 +126,6 @@ function getLinkUsageData() {
 function setLinkUsageData(data) {
   localStorage.setItem("linkUsageData", JSON.stringify(data));
 }
-
-
-
 
 function fetchIcon(url) {
   const urlWithoutProtocol = url.replace(/^https?:\/\//, ""); // Remove "https://" or "http://"
@@ -212,4 +207,3 @@ function setDefaultLinks() {
 function sortLinksAlphabetically(links) {
   links.sort((a, b) => a.title.localeCompare(b.title));
 }
-
