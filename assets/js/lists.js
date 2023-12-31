@@ -214,37 +214,3 @@ function sortLinksAlphabetically(links) {
   links.sort((a, b) => a.title.localeCompare(b.title));
 }
 
-
-
-
-
-window.onload = function() {
-  createFolderAndCopyData();
-};
-
-
-async function createFolderAndCopyData() {
-  try {
-    // Request permission to access the file system
-    const fileHandle = await window.showDirectoryPicker();
-
-    // Create a folder inside the chosen directory
-    const folderHandle = await fileHandle.getDirectoryHandle('YourFolderName', { create: true });
-
-    // Access local storage data (assuming it's a key-value pair)
-    const localStorageData = { ...localStorage };
-
-    // Create a file inside the folder and write the data
-    const fileHandleInFolder = await folderHandle.getFileHandle('localStorageData.txt', { create: true });
-    const writableStream = await fileHandleInFolder.createWritable();
-    await writableStream.write(JSON.stringify(localStorageData));
-    await writableStream.close();
-
-    console.log('Data copied to folder successfully.');
-  } catch (error) {
-    console.error('Error:', error);
-  }
-}
-
-// Call the function to initiate the process
-createFolderAndCopyData();

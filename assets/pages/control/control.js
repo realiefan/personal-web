@@ -198,3 +198,35 @@ function restoreData() {
     input.click();
 }
 
+
+document
+  .getElementById("createFolderButton")
+  .addEventListener("click", createFolderAndSaveData);
+
+async function createFolderAndSaveData() {
+  try {
+    // Request permission to access the file system
+    const fileHandle = await window.showDirectoryPicker();
+
+    // Create a folder inside the chosen directory
+    const folderHandle = await fileHandle.getDirectoryHandle("YourFolderName", {
+      create: true,
+    });
+
+    // Access local storage data (assuming it's a key-value pair)
+    const localStorageData = { ...localStorage };
+
+    // Create a file inside the folder and write the data as JSON
+    const fileHandleInFolder = await folderHandle.getFileHandle(
+      "localStorageData.json",
+      { create: true }
+    );
+    const writableStream = await fileHandleInFolder.createWritable();
+    await writableStream.write(JSON.stringify(localStorageData, null, 2)); // Use null and 2 for pretty formatting
+    await writableStream.close();
+
+    console.log("Data saved to folder as JSON successfully.");
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}

@@ -117,6 +117,13 @@ body {
     padding: 4px;
 
 }
+.fileSync {
+        background: linear-gradient(90deg, #a77cb4, #7f7dd1);
+        font-size: 0px;
+        color: #212121;
+        padding: 4px;
+
+    }
 
 
 #toggleDeleteButton {
