@@ -78,8 +78,7 @@ function displayLinkAnalytics() {
               : "N/A";
 
             return [
-              `${label}: ${value} clicks`,
-              `Time to load: ${performance}`,
+              `Opened: ${value} times`,
               `Last Access: ${lastAccessTime}`,
             ];
           },

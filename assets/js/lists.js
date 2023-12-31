@@ -110,15 +110,14 @@ function updateLinkClickCount(url, title) {
   // Update the latest access time
   linkInfo.lastAccessTime = new Date().toISOString();
 
-  // Measure performance using the Performance API
-  if (window.performance && window.performance.now) {
-    linkInfo.performance = window.performance.now();
-  }
+  // Remove the code related to performance measurement
+  // linkInfo.performance = null;
 
   // Update the link usage data in local storage
   linkUsageData[url] = linkInfo;
   setLinkUsageData(linkUsageData);
 }
+
 
 
 // Add this function to your existing code

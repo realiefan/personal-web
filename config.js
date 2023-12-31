@@ -13,27 +13,27 @@ const CONFIG = {
     {
       id: "2",
       name: "Gmail",
-      icon: "mails",
-      link: "https://mail.google.com/mail/",
+      icon: "database-zap",
+      link: "/assets/pages/backup/backup.html",
     },
     {
       id: "5",
-      name: "Nostrnet",
-      icon: "pen-square",
-      link: "https://keep.google.com/",
+      name: "Wallet",
+      icon: "zap",
+      link: "/assets/pages/wallet/wallet.html",
     },
 
     {
       id: "1",
       name: "Calendar",
       icon: "calendar-check-2",
-      link: "https://calendar.google.com/",
+      link: "https://cal.nostrnet.work/",
     },
     {
       id: "3",
-      name: "Wallet",
-      icon: "wallet",
-      link: "/assets/pages/wallet/wallet.html",
+      name: "Setting",
+      icon: "settings",
+      link: "/assets/pages/control/control.html",
     },
   ],
 };

@@ -1,0 +1,307 @@
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@400;700&display=swap');
+
+:root {
+  --color-primary: #007bff;
+  --color-secondary: #ccc;
+  --color-background: #202124;
+  --color-text: #fff;
+}
+
+body {
+  font-family: 'Red Hat Text', sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo{
+  width: 40px;
+  padding: 2px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+
+}
+
+.logo-container {
+  margin-right: 10px;
+  
+}
+
+h1 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+h2 {
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.5;
+  margin-bottom: 5px;
+  max-width: 52ch;
+  padding: .3em;
+}
+
+p {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+  font-weight: 400;
+}
+a {
+  display: inline-block;
+  padding: .5em 1.5em;
+  background-color: var(--color-primary);
+  color: var(--color-text);
+  text-decoration: none;
+ 
+  border-radius: 0.3em;
+  font-weight: 700;
+  letter-spacing: .5px;
+  font-size: .875rem;
+  text-align: center;
+}
+
+button {
+  padding: 8px 8px;
+  background-color: #0c53e2;
+  color: #f0ecec;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 5px;
+  font-weight: bold;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+  background-color: #0c53e2;
+}
+
+
+
+.dataBase a {
+  display: inline-block;
+  padding: 5px 5px;
+  background-color: #434547;
+  color: #f0ecec;
+  text-decoration: none;
+  border: none;
+  font-size: x-small;
+  font-weight: 600;
+  border-radius: 25px;
+  margin-left: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.dataBase a:hover {
+  background-color: #0056b3;
+  /* Button background color on hover */
+}
+
+footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.box {
+  background-color: #35373a;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+.progress-bar {
+  height: 10px;
+  background-color: #555;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar::-webkit-progress-bar {
+  background-color: #555;
+  border-radius: 10px;
+}
+
+.progress-bar::-webkit-progress-value {
+  background-color: var(--color-primary);
+  border-radius: 10px;
+  animation: loading 2s ease-out infinite;
+}
+
+.space-between {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+
+.space-between-small {
+  display: flex;
+  justify-content: center;
+}
+
+#pubkey {
+  display: flex;
+  font-size: 16px;
+  padding: 5px;
+  border: none;
+  border-radius: 4px;
+  box-sizing: border-box;
+  min-width: 100%;
+  margin: 0 auto;
+  display: block;
+  color: var(--color-text);
+  background-color: #35373a;
+  width: 290px;
+}
+
+
+
+@media (min-width: 668px) {
+  /* Medium devices (e.g., tablets) */
+  #pubkey {
+    width: 500px;
+  }
+}
+
+
+#pubkey::placeholder {
+  color: #999;
+}
+
+.wrapper {
+  padding-bottom: 20px;
+}
+
+.divider {
+  position: relative;
+  margin-top: 5px;
+  height: 5px;
+  margin-bottom: 5px;
+}
+
+.div-transparent:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 5%;
+  right: 5%;
+  width: 90%;
+  height: 1px;
+  background-image: linear-gradient(to right, transparent, rgb(48,49,51), transparent);
+}
+
+h4 {
+  font-size: 1.4rem;
+  font-weight: 450;
+}
+
+h5 {
+  margin: 0;
+  padding: 10px;
+  text-align: center;
+  display: inline-block;
+  font-weight: 600;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+  padding: 5px 10px;
+  background-color: #35373a;
+  color: #e3e2e2;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 4px;
+  font-weight: 600;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+  background-color: #b0b0b3;
+}
+
+
+
+/* Style the toggle button container */
+.toggle-button {
+  display: inline-block;
+
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hide the input checkbox */
+.toggle-button input[type="checkbox"] {
+  display: none;
+}
+
+/* Change the background color and text color when the toggle is checked */
+.toggle-button input[type="checkbox"]:checked+label {
+  background-color: #e82f0e;
+  color: white;
+}
+
+/* Style the label for the toggle switch */
+.toggle-button label {
+  display: inline-block;
+    padding: 5px 5px;
+    background-color: #131314;
+    /* Button background color */
+    color: #f0ecec;
+    text-decoration: none;
+    border: none;
+    font-size: x-small;
+    font-weight: 600;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Style the slider knob */
+.toggle-button input[type="checkbox"]+label::before {
+  
+  display: none;
+  
+}
+
+/* Move the slider knob to the right when checked */
+.toggle-button input[type="checkbox"]:checked+label::before {
+  transform: translateX(20px);
+}
+
+
+
+
+
+footer p {
+  margin: 0;
+  padding: 10px;
+  text-align: center;
+  display: inline-block;
+}
+
+#file-selector{
+  font-size: small;
+  font-weight: 600;
+}
+
+#checking-relays{
+  font-weight: 400;
+}
+
