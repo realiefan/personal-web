@@ -222,3 +222,30 @@ function displayTransactions(transactions) {
     transactionsContainer.appendChild(transactionDiv);
   });
 }
+
+ document.getElementById("openIframeButton").addEventListener("click", () => {
+   // Replace 'https://your-signup-application-domain.com' with the actual domain
+   const signupWebsiteUrl = "https://signup.zapit.live/";
+
+   // Set the source of the iframe to the sign-up website
+   const iframe = document.getElementById("signupIframe");
+   iframe.src = signupWebsiteUrl;
+   iframe.style.display = "block";
+
+   // Listen for the message from the iframe and save it to local storage
+   window.addEventListener("message", (event) => {
+     if (event.origin === signupWebsiteUrl) {
+       const receivedMessage = event.data;
+
+       // Split the receivedMessage to extract adminkey and URL
+       const [adminkey, url] = receivedMessage.split(" ");
+
+       // Save the values to local storage
+       localStorage.setItem("adminkey", adminkey);
+       localStorage.setItem("url", url);
+
+       // You can perform other actions as needed
+       console.log("Received and saved:", adminkey, url);
+     }
+   });
+ });
