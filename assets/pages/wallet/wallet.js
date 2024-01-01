@@ -257,7 +257,9 @@ function displayTransactions(transactions) {
    });
 
    // Function to close the iframe modal
-   function closeIframeModal() {
-     document.getElementById("iframeModal").style.display = "none";
-     document.getElementById("signupIframe").src = ""; // Clear the iframe source
-   }
+  // Function to close the iframe modal and refresh the page
+function closeIframeModal() {
+  document.getElementById("iframeModal").style.display = "none";
+  document.getElementById("signupIframe").src = ""; // Clear the iframe source
+  location.reload(); // Refresh the page
+}
