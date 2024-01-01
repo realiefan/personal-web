@@ -224,28 +224,30 @@ function displayTransactions(transactions) {
 }
 
   // Receiver: Listen for the message from the iframe and save it to local storage
-window.addEventListener('message', (event) => {
-  if (event.origin === 'https://webcore.live') {
-    const receivedMessage = event.data;
+document.getElementById("openIframeButton").addEventListener("click", () => {
+  const signupWebsiteUrl = "https://signup.zapit.live/"; // Replace with the actual domain
 
-    // Split the receivedMessage to extract adminkey and URL
-    const [adminkey, url] = receivedMessage.split(' ');
+  // Create and append iframe
+  const iframe = document.createElement("iframe");
+  iframe.src = signupWebsiteUrl;
+  iframe.style.width = "100%";
+  iframe.style.height = "500px";
+  document.body.appendChild(iframe);
 
-    // Save the values to local storage
-    localStorage.setItem('adminkey', adminkey);
+  // Listen for the message from the iframe and save it to local storage
+  window.addEventListener("message", (event) => {
+    if (event.origin === signupWebsiteUrl) {
+      const receivedMessage = event.data;
 
-    // Check if the URL is valid
-    if (url.startsWith('https://pay.zapit.live/wallet?')) {
-      // Save the URL to local storage with key 'walletLink'
-      localStorage.setItem('walletLink', url);
-    } else {
-      // Save the non-URL part to local storage with key 'walletId'
-      localStorage.setItem('walletId', url);
+      // Split the receivedMessage to extract adminkey and URL
+      const [adminkey, url] = receivedMessage.split(" ");
+
+      // Save the values to local storage
+      localStorage.setItem("adminkey", adminkey);
+      localStorage.setItem("url", url);
+
+      // Log for debugging
+      console.log("Received and saved:", adminkey, url);
     }
-
-    // Log for debugging
-    console.log('Receiver: Received and saved:', adminkey, url);
-  }
-  // Log for debugging
-  console.log('Receiver: Received message from:', event.origin);
+  });
 });
