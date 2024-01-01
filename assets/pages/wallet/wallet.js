@@ -223,32 +223,35 @@ function displayTransactions(transactions) {
   });
 }
 
-document.getElementById("openIframeButton").addEventListener("click", () => {
-  const signupWebsiteUrl = "https://signup.zapit.live/"; // Replace with the actual domain
+// Button click event handler
+document.getElementById('openIframeButton').addEventListener('click', () => {
+  const signupWebsiteUrl = "https://signup.zapit.live/";  // Replace with the actual domain
 
   // Create and append iframe
-  const iframe = document.createElement("iframe");
+  const iframe = document.createElement('iframe');
   iframe.src = signupWebsiteUrl;
-  iframe.style.width = "100%";
-  iframe.style.height = "500px";
+  iframe.style.width = '100%';
+  iframe.style.height = '500px';
   document.body.appendChild(iframe);
 
   // Listen for the message from the iframe and save it to local storage
-  window.addEventListener("message", (event) => {
-    console.log("Message received:", event);
+  window.addEventListener('message', (event) => {
+    console.log('Message received:', event);
 
     if (event.origin === signupWebsiteUrl) {
       const receivedMessage = event.data;
 
       // Split the receivedMessage to extract adminkey and URL
-      const [adminkey, url] = receivedMessage.split(" ");
+      const [adminkey, url] = receivedMessage.split(' ');
 
       // Save the values to local storage
-      localStorage.setItem("adminkey", adminkey);
-      localStorage.setItem("url", url);
-
-      // Log for debugging
-      console.log("Received and saved:", adminkey, url);
+      try {
+        localStorage.setItem('adminkey', adminkey);
+        localStorage.setItem('url', url);
+        console.log('Values saved to local storage:', adminkey, url);
+      } catch (error) {
+        console.error('Error saving to local storage:', error);
+      }
     }
   });
 });
