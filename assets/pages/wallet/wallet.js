@@ -224,8 +224,9 @@ function displayTransactions(transactions) {
 }
 
 // Button click event handler
+// Button click event handler
 document.getElementById('openIframeButton').addEventListener('click', () => {
-  const signupWebsiteUrl = "https://signup.zapit.live";  // Replace with the actual domain
+  const signupWebsiteUrl = 'https://signup.zapit.live/';  // Replace with the actual domain
 
   // Create and append iframe
   const iframe = document.createElement('iframe');
@@ -244,11 +245,15 @@ document.getElementById('openIframeButton').addEventListener('click', () => {
       // Split the receivedMessage to extract adminkey and URL
       const [adminkey, url] = receivedMessage.split(' ');
 
-      // Save the values to local storage
+      // Save the values inside the "walletData" key in local storage
       try {
-        localStorage.setItem('adminkey', adminkey);
-        localStorage.setItem('url', url);
-        console.log('Values saved to local storage:', adminkey, url);
+        const walletData = {
+          walletId: adminkey,
+          walletLink: url
+        };
+
+        localStorage.setItem('walletData', JSON.stringify(walletData));
+        console.log('Values saved to local storage:', walletData);
       } catch (error) {
         console.error('Error saving to local storage:', error);
       }
