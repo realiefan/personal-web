@@ -223,7 +223,6 @@ function displayTransactions(transactions) {
   });
 }
 
-  // Receiver: Listen for the message from the iframe and save it to local storage
 document.getElementById("openIframeButton").addEventListener("click", () => {
   const signupWebsiteUrl = "https://signup.zapit.live/"; // Replace with the actual domain
 
@@ -236,6 +235,8 @@ document.getElementById("openIframeButton").addEventListener("click", () => {
 
   // Listen for the message from the iframe and save it to local storage
   window.addEventListener("message", (event) => {
+    console.log("Message received:", event);
+
     if (event.origin === signupWebsiteUrl) {
       const receivedMessage = event.data;
 
