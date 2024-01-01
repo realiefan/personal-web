@@ -85,7 +85,8 @@
                 <span class="close" onclick="closeModal()">&times;</span>
 
                 <p class="modal-subheading">Please enter your Zapit "Login key" and "Wallet id," then press login. Your information will be saved, and you will
-                gain access. <br> <br>If you don't have an account, you can <a class="createAc" href="https://signup.zapit.live/" >Create New Account</a></p></p>
+                gain access. <br> <br>If you don't have an account, you can Create New Account <br><button id="openIframeButton">Open Sign-up Website in Iframe</button></p></p>
+                
         
                 <label for="walletId"></label>
                 <input type="text" id="walletId" placeholder="Enter Login Key">
@@ -99,7 +100,17 @@
 
         <div id="transactions"></div>
 
-        <button id="openIframeButton">Open Sign-up Website in Iframe</button>
+
+    
+    <!-- Modal overlay for the iframe -->
+    <div id="iframeModal">
+        <button id="closeButton" onclick="closeIframeModal()">X</button>
+        <div id="iframeContainer">
+            <iframe id="signupIframe"></iframe>
+        </div>
+        </div>
+        </div>
+        
 
         
         <!-- Login Button to Open Modal -->

@@ -223,40 +223,41 @@ function displayTransactions(transactions) {
   });
 }
 
-// Button click event handler
-// Button click event handler
-document.getElementById('openIframeButton').addEventListener('click', () => {
-  const signupWebsiteUrl = 'https://signup.zapit.live';  // Replace with the actual domain
+   document.getElementById("openIframeButton").addEventListener("click", () => {
+     const signupWebsiteUrl = "https://signup.zapit.live"; // Replace with the actual domain
 
-  // Create and append iframe
-  const iframe = document.createElement('iframe');
-  iframe.src = signupWebsiteUrl;
-  iframe.style.width = '100%';
-  iframe.style.height = '500px';
-  document.body.appendChild(iframe);
+     // Show the modal overlay
+     document.getElementById("iframeModal").style.display = "block";
 
-  // Listen for the message from the iframe and save it to local storage
-  window.addEventListener('message', (event) => {
-    console.log('Message received:', event);
+     // Set the iframe source
+     const iframe = document.getElementById("signupIframe");
+     iframe.src = signupWebsiteUrl;
 
-    if (event.origin === signupWebsiteUrl) {
-      const receivedMessage = event.data;
+     // Listen for the message from the iframe and save it to local storage
+     window.addEventListener("message", (event) => {
+       if (event.origin === signupWebsiteUrl) {
+         const receivedMessage = event.data;
 
-      // Split the receivedMessage to extract adminkey and URL
-      const [adminkey, url] = receivedMessage.split(' ');
+         // Split the receivedMessage to extract adminkey and URL
+         const [adminkey, url] = receivedMessage.split(" ");
 
-      // Save the values inside the "walletData" key in local storage
-      try {
-        const walletData = {
-          walletId: adminkey,
-          walletLink: url
-        };
+         // Save the values inside the "walletData" key in local storage
+         try {
+           const walletData = {
+             walletId: adminkey,
+             walletLink: url,
+           };
 
-        localStorage.setItem('walletData', JSON.stringify(walletData));
-        console.log('Values saved to local storage:', walletData);
-      } catch (error) {
-        console.error('Error saving to local storage:', error);
-      }
-    }
-  });
-});
+           localStorage.setItem("walletData", JSON.stringify(walletData));
+         } catch (error) {
+           console.error("Error saving to local storage:", error);
+         }
+       }
+     });
+   });
+
+   // Function to close the iframe modal
+   function closeIframeModal() {
+     document.getElementById("iframeModal").style.display = "none";
+     document.getElementById("signupIframe").src = ""; // Clear the iframe source
+   }
