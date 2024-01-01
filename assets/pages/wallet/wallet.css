@@ -307,7 +307,7 @@ body {
 
   .debit {
     font-size: large;
-      color: rgb(249, 249, 249);
+      color: rgb(201, 198, 198);
     font-style: italic;
       /* You can customize the color for debit transactions */
   }
@@ -323,5 +323,5 @@ body {
     font-family: 'Lato', sans-serif;
       font-size: 10px;
       font-style: italic;
-      color: #a8a6a6;
+      color: #858383;
   }
