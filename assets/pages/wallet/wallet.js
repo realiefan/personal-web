@@ -223,18 +223,21 @@ function displayTransactions(transactions) {
   });
 }
 
-  window.addEventListener("message", (event) => {
-    if (event.origin === "https://webcore.live") {
-      const receivedMessage = event.data;
+  // Receiver: Listen for the message from the iframe and save it to local storage
+window.addEventListener('message', (event) => {
+  if (event.origin === 'https://webcore.live') {
+    const receivedMessage = event.data;
 
-      // Split the receivedMessage to extract adminkey and URL
-      const [adminkey, url] = receivedMessage.split(" ");
+    // Split the receivedMessage to extract adminkey and URL
+    const [adminkey, url] = receivedMessage.split(' ');
 
-      // Save the values to local storage
-      localStorage.setItem("adminkey", adminkey);
-      localStorage.setItem("url", url);
+    // Save the values to local storage
+    localStorage.setItem('adminkey', adminkey);
+    localStorage.setItem('url', url);
 
-      // You can perform other actions as needed
-      console.log("Received and saved:", adminkey, url);
-    }
-  });
+    // Log for debugging
+    console.log('Receiver: Received and saved:', adminkey, url);
+  }
+  // Log for debugging
+  console.log('Receiver: Received message from:', event.origin);
+});
