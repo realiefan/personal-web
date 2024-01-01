@@ -307,14 +307,14 @@ body {
 
   .debit {
     font-size: large;
-      color: red;
+      color: rgb(249, 249, 249);
     font-style: italic;
       /* You can customize the color for debit transactions */
   }
 
   .credit {
     font-size: large;
-      color: green;
+      color: #f7931a;
     font-style: italic;
       /* You can customize the color for credit transactions */
   }
