@@ -226,7 +226,7 @@ function displayTransactions(transactions) {
 // Button click event handler
 // Button click event handler
 document.getElementById('openIframeButton').addEventListener('click', () => {
-  const signupWebsiteUrl = 'https://signup.zapit.live/';  // Replace with the actual domain
+  const signupWebsiteUrl = 'https://signup.zapit.live';  // Replace with the actual domain
 
   // Create and append iframe
   const iframe = document.createElement('iframe');
