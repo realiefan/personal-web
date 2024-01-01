@@ -8,9 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const openWalletButtons = document.querySelectorAll(".openWalletButton");
   openWalletButtons.forEach((button) => {
     button.addEventListener("click", openWallet);
-
-
-    fetchWalletBalance();
   });
 
   // Attach event listener for Login button
@@ -20,6 +17,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Attach event listener for Close button in the modal
   const closeModalButton = document.querySelector(".close");
   closeModalButton.addEventListener("click", closeModal);
+
+  // Fetch wallet balance on page load
+  fetchWalletBalance();
 });
 
 function openModal() {
@@ -43,7 +43,6 @@ function openModal() {
 
   walletModal.style.display = "block";
 }
-
 
 function closeModal() {
   const walletModal = document.getElementById("walletModal");
@@ -128,7 +127,6 @@ function openWallet(buttonType) {
         window.location.href = walletData.walletLink.replace("wallet", "cashu");
         break;
       default:
-        
         break;
     }
   } else {
@@ -138,11 +136,11 @@ function openWallet(buttonType) {
   }
 }
 
+function openLink() {
+  // Replace 'your-link-url' with the actual URL you want to open
+  window.location.href = "/";
+}
 
- function openLink() {
-   // Replace 'your-link-url' with the actual URL you want to open
-   window.location.href = "/";
- }
 
 
 
@@ -154,15 +152,18 @@ async function fetchWalletBalance() {
     const apiKey = walletData.walletId;
 
     try {
-      const response = await fetch("https://pay.zapit.live/api/v1/wallet", {
-        method: "GET",
-        headers: {
-          "X-Api-Key": apiKey,
-        },
-      });
+      const balanceResponse = await fetch(
+        "https://pay.zapit.live/api/v1/wallet",
+        {
+          method: "GET",
+          headers: {
+            "X-Api-Key": apiKey,
+          },
+        }
+      );
 
-      if (response.ok) {
-        const { balance } = await response.json();
+      if (balanceResponse.ok) {
+        const { balance } = await balanceResponse.json();
         const formattedBalance = Math.floor(balance / 1000); // Divide and round down
 
         // Update the balance element in the HTML
@@ -171,10 +172,51 @@ async function fetchWalletBalance() {
       } else {
         console.error("Error fetching wallet balance.");
       }
+
+      // Fetch transactions using the same API key
+      const transactionsResponse = await fetch(
+        `https://pay.zapit.live/api/v1/payments?api-key=${apiKey}`
+      );
+
+      if (transactionsResponse.ok) {
+        const transactionsData = await transactionsResponse.json();
+        displayTransactions(transactionsData);
+      } else {
+        console.error("Error fetching transactions.");
+      }
     } catch (error) {
-      console.error("Error fetching wallet balance:", error.message);
+      console.error(
+        "Error fetching wallet balance and transactions:",
+        error.message
+      );
     }
   } else {
     console.error("No wallet details found. Save wallet details first.");
   }
+}
+
+function displayTransactions(transactions) {
+  const transactionsContainer = document.getElementById("transactions");
+  transactionsContainer.innerHTML = ""; // Clear previous transactions
+
+  transactions.forEach((transaction) => {
+    const transactionDiv = document.createElement("div");
+    transactionDiv.classList.add("transaction");
+
+    // Divide the amount by 1000
+    const formattedAmount = transaction.amount / 1000;
+
+    // Check if the amount is negative and apply styling
+    const amountClass = formattedAmount < 0 ? "debit" : "credit";
+    const transactionType = formattedAmount < 0 ? "Paid: " : "Received: ";
+
+    transactionDiv.innerHTML = `
+        <p class="${amountClass}">${transactionType} <strong>${formattedAmount}</strong></p>
+        <p class="time"><strong></strong> ${new Date(
+          transaction.time * 1000
+        ).toLocaleString()}</p>
+      `;
+
+    transactionsContainer.appendChild(transactionDiv);
+  });
 }

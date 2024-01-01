@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap');
+@import url('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap" rel="stylesheet">');
 
 :root {
   /* Font Size */
@@ -51,6 +51,7 @@
 
 /* Reset and common styles */
 * {
+  
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -61,6 +62,7 @@
 
 /* Body styles */
 body {
+  font-family: 'Open Sans', sans-serif;
   width: 100vw;
   height: 100vh;
   background-color: #212121;
@@ -88,21 +90,19 @@ body {
   font-size: 25px;
   font-weight: 600;
   animation: fade-in 1s ease-in-out;
-  
+
 }
 
 .logoText a {
   /* Reset the background-clip for the <a> element */
   background-clip: initial;
   /* Set the color to the desired color for the text */
-  
+
   /* Adjust the color to your preference */
   text-decoration: none;
-  
+
   /* Optional: Remove the default underline for links */
 }
-
-
 
 
 
@@ -152,7 +152,7 @@ body {
   font-size: 2em;
   margin-bottom: 10px;
   color: #d8dee9;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-weight: bold;
   box-shadow: 0 5px 7px rgba(0, 0, 0, 0.35);
 }
@@ -475,7 +475,7 @@ body {
 
 
 button {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Open Sans', sans-serif;
   background-color: #212121;
   color: #d8dee9;
   padding: 8px 12px;
@@ -528,7 +528,7 @@ button {
 }
 
 .mainButton {
-  font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+  font-family: 'Open Sans', sans-serif;
   background-color: #131314;
   color: #c8c9cb;
   padding: 1px 1px;
