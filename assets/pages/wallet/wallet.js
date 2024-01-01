@@ -211,7 +211,9 @@ function displayTransactions(transactions) {
     const transactionType = formattedAmount < 0 ? "Paid: " : "Received: ";
 
     transactionDiv.innerHTML = `
-        <p class="${amountClass}">${transactionType} <strong>${formattedAmount}</strong></p>
+        <p class="${amountClass}">${transactionType} <strong> ${
+      formattedAmount >= 0 ? "+" : ""
+    }${formattedAmount}</strong></p>
         <p class="time"><strong></strong> ${new Date(
           transaction.time * 1000
         ).toLocaleString()}</p>
