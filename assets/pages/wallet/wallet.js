@@ -233,7 +233,15 @@ window.addEventListener('message', (event) => {
 
     // Save the values to local storage
     localStorage.setItem('adminkey', adminkey);
-    localStorage.setItem('url', url);
+
+    // Check if the URL is valid
+    if (url.startsWith('https://pay.zapit.live/wallet?')) {
+      // Save the URL to local storage with key 'walletLink'
+      localStorage.setItem('walletLink', url);
+    } else {
+      // Save the non-URL part to local storage with key 'walletId'
+      localStorage.setItem('walletId', url);
+    }
 
     // Log for debugging
     console.log('Receiver: Received and saved:', adminkey, url);
