@@ -3,6 +3,6 @@
       "target": {
         "namespace": "android_app",
         "package_name": "live.webcore.twa",
-        "sha256_cert_fingerprints": ["93:47:AB:47:1F:E1:B4:7B:17:CB:56:74:5F:F4:B9:0A:13:1F:D3:C3:A9:88:84:62:2C:14:0E:E6:16:AD:D6:7D"]
+        "sha256_cert_fingerprints": ["C4:02:F7:F9:90:42:4D:DB:7A:B6:6B:2E:41:CE:EE:F2:4D:87:94:53:8B:EB:EE:A8:5C:35:A7:31:2C:7B:A6:6A"]
       }
     }]
