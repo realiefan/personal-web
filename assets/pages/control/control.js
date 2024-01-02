@@ -92,6 +92,8 @@ function createLinkContainer(link) {
   return linkDiv;
 }
 
+
+
 function loadLinks() {
   const linkContainer = document.getElementById("linksContainer");
   let links = JSON.parse(localStorage.getItem("links")) || [];
@@ -116,6 +118,8 @@ function goHome() {
   const homeLink = "/index.html";
   window.location.href = homeLink;
 }
+
+
 
 function openBackupRestoreDialog() {
   document.getElementById("backupRestoreDialog").showModal();
@@ -163,53 +167,47 @@ function downloadData() {
 }
 
 function restoreData() {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = ".json";
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
 
-  input.onchange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const data = JSON.parse(e.target.result);
+    input.onchange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = JSON.parse(e.target.result);
 
-        // Iterate over the keys in the loaded data and set them in local storage
-        for (const key in data) {
-          if (data.hasOwnProperty(key)) {
-            localStorage.setItem(key, data[key]);
-          }
+                // Iterate over the keys in the loaded data and set them in local storage
+                for (const key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        localStorage.setItem(key, data[key]);
+                    }
+                }
+
+                // Reload data on the page
+                // Assuming there's a load function specific to your application
+                loadData();
+                // Close the dialog
+                closeBackupRestoreDialog();
+            };
+            reader.readAsText(file);
         }
+    };
 
-        // Reload data on the page
-        // Assuming there's a load function specific to your application
-        loadData();
-        // Close the dialog
-        closeBackupRestoreDialog();
-      };
-      reader.readAsText(file);
-    }
-  };
-
-  input.click();
+    input.click();
 }
 
-document
-  .getElementById("downloadDataButton")
-  .addEventListener("click", downloadData);
+
+document.getElementById('downloadDataButton').addEventListener('click', downloadData);
 
 function downloadData() {
   const localStorageData = { ...localStorage };
   const jsonString = JSON.stringify(localStorageData, null, 2);
 
-  const blob = new Blob([jsonString], { type: "application/json" });
-  const link = document.createElement("a");
+  const blob = new Blob([jsonString], { type: 'application/json' });
+  const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = "localStorageData.json";
+  link.download = 'localStorageData.json';
   link.click();
-}
-
-function openLink() {
-  // Replace 'your-link-url' with the actual URL you want to open
-  window.location.href = "/";
 }
