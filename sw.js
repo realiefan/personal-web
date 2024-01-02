@@ -1,7 +1,5 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
 
-importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
-
 const CACHE_PREFIX = "NostrNet";
 const CACHE_VERSION = "V2";
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
