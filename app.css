@@ -82,13 +82,10 @@ body {
   left: 0;
   top: 0;
   /* Apply the linear gradient to the text content of the logo */
-  background: linear-gradient(90deg, #7f7dd1, #548dd9 100%, #548dd9 0);
-  -webkit-background-clip: text;
-  color: transparent;
+  
   border: none;
   cursor: pointer;
-  font-size: 25px;
-  font-weight: 600;
+  
 
 
 }
