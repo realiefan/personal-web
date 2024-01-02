@@ -1,7 +1,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
 
 const CACHE_PREFIX = "NostrNet";
-const CACHE_VERSION = "V0.9";
+const CACHE_VERSION = "V1.0";
 const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VERSION}`;
 
 workbox.routing.registerRoute(
