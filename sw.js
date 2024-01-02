@@ -1,10 +1,31 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
 
+importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
+
 const CACHE_PREFIX = "NostrNet";
-const CACHE_VERSION = "V2"; // Update the cache version when you make changes to the caching logic
+const CACHE_VERSION = "V2";
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
 const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
+
+
+// Function to show periodic notifications
+function showPeriodicNotification() {
+  const title = "Periodic Notification";
+  const options = {
+    body: "This is a periodic notification for testing.",
+    icon: "/path/to/your/icon.png",
+  };
+
+  self.registration.showNotification(title, options);
+}
+
+// Schedule periodic notifications every 10 seconds
+setInterval(() => {
+  showPeriodicNotification();
+}, 10000);
+
+
 
 // Cache static files (HTML, CSS, JS, SVG, PNG)
 workbox.routing.registerRoute(
@@ -136,4 +157,4 @@ async function cleanupIconCache() {
       .filter((request) => !uniqueURLs.has(request.url))
       .map((request) => iconCache.delete(request))
   );
-  }
+}
