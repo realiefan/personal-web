@@ -82,7 +82,7 @@ body {
   /* Apply the linear gradient to the text content of the logo */
     
   position: absolute;
-  margin: 2%;
+  margin: 4%;
   
   
   
@@ -179,7 +179,7 @@ body {
 
 /* Search bar styles */
 .searchBar {
-  margin-top: 5px;
+  margin-top: 5%;
   text-align: center;
   margin-bottom: 0px;
   display: flex;
