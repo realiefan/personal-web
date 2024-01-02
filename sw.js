@@ -1,9 +1,10 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
 
 const CACHE_PREFIX = "NostrNet";
-const CACHE_VERSION = "V1.5"; // Update the cache version when you make changes to the caching logic
+const CACHE_VERSION = "V2"; // Update the cache version when you make changes to the caching logic
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
+const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
 
 // Cache static files (HTML, CSS, JS, SVG, PNG)
 workbox.routing.registerRoute(
@@ -38,11 +39,11 @@ workbox.routing.registerRoute(
   })
 );
 
-// Cache icons using the cache-first strategy
+// Cache icons based on their unique URLs
 workbox.routing.registerRoute(
   ({ url }) => url.pathname.startsWith("/icon/"),
-  new workbox.strategies.CacheFirst({
-    cacheName: "icon-cache",
+  new workbox.strategies.StaleWhileRevalidate({
+    cacheName: ICON_CACHE_NAME,
     plugins: [
       new workbox.expiration.ExpirationPlugin({
         maxEntries: 50, // adjust as needed
@@ -54,13 +55,10 @@ workbox.routing.registerRoute(
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((cache) => cache.startsWith(CACHE_PREFIX) && !cache.includes(CACHE_VERSION))
-          .map((cache) => caches.delete(cache))
-      );
-    })
+    Promise.all([
+      cleanupCaches([CACHE_NAME_STATIC, CACHE_NAME_DYNAMIC]),
+      cleanupIconCache(),
+    ])
   );
 });
 
@@ -105,7 +103,7 @@ self.addEventListener("fetch", (event) => {
         return (
           cachedResponse ||
           fetch(event.request).then((networkResponse) => {
-            caches.open("icon-cache").then((cache) => {
+            caches.open(ICON_CACHE_NAME).then((cache) => {
               cache.put(event.request, networkResponse.clone());
             });
             return networkResponse;
@@ -115,3 +113,27 @@ self.addEventListener("fetch", (event) => {
     );
   }
 });
+
+// Utility function to cleanup old caches
+async function cleanupCaches(keepCaches) {
+  const cacheNames = await caches.keys();
+  return Promise.all(
+    cacheNames
+      .filter(
+        (cache) => cache.startsWith(CACHE_PREFIX) && !keepCaches.some((keepCache) => cache.includes(keepCache))
+      )
+      .map((cache) => caches.delete(cache))
+  );
+}
+
+// Utility function to cleanup old icon cache entries
+async function cleanupIconCache() {
+  const iconCache = await caches.open(ICON_CACHE_NAME);
+  const requests = await iconCache.keys();
+  const uniqueURLs = new Set(requests.map((request) => request.url));
+  return Promise.all(
+    requests
+      .filter((request) => !uniqueURLs.has(request.url))
+      .map((request) => iconCache.delete(request))
+  );
+  }
