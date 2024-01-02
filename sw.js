@@ -14,7 +14,7 @@ function showPeriodicNotification() {
   const title = "Periodic Notification";
   const options = {
     body: "This is a periodic notification for testing.",
-    icon: "/path/to/your/icon.png",
+    icon: "/assests/icons/icon.png",
   };
 
   self.registration.showNotification(title, options);
