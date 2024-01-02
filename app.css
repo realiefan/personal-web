@@ -179,7 +179,7 @@ body {
 
 /* Search bar styles */
 .searchBar {
-  margin-top: 5%;
+  margin-top: 5px;
   text-align: center;
   margin-bottom: 0px;
   display: flex;
