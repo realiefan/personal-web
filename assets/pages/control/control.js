@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("click", toggleDeleteButtons);
 });
 
+
 function openLinkAddingDialog() {
   document.getElementById("linkAddingDialog").showModal();
 }
@@ -15,6 +16,11 @@ function openLinkAddingDialog() {
 function closeLinkAddingDialog() {
   document.getElementById("linkAddingDialog").close();
 }
+
+const db = new Dexie("WebCore");
+db.version(1).stores({
+  links: "++id, title, url",
+});
 
 function addLink() {
   const title = document.getElementById("newLinkTitle").value;
@@ -26,37 +32,42 @@ function addLink() {
   }
 
   if (title && url) {
-    const links = JSON.parse(localStorage.getItem("links")) || [];
+    // Check for duplicate links in IndexedDB
+    db.links
+      .where("title")
+      .equals(title)
+      .or("url")
+      .equals(url)
+      .count()
+      .then((count) => {
+        if (count > 0) {
+          alert("This link already exists.");
+          return;
+        }
 
-    // Check for duplicate links
-    const isDuplicate = links.some(
-      (link) => link.title === title || link.url === url
-    );
-    if (isDuplicate) {
-      alert("This link already exists.");
-      return;
-    }
+        // Save link to IndexedDB
+        db.links.add({ title, url });
 
-    links.push({ title, url });
-    localStorage.setItem("links", JSON.stringify(links));
+        const linkContainer = document.getElementById("linksContainer");
 
-    const linkContainer = document.getElementById("linksContainer");
+        const linkDiv = createLinkContainer({ title, url });
 
-    const linkDiv = createLinkContainer({ title, url });
+        linkContainer.appendChild(linkDiv);
 
-    linkContainer.appendChild(linkDiv);
+        // Clear input fields
+        document.getElementById("newLinkTitle").value = "";
+        document.getElementById("newLinkURL").value = "";
 
-    // Clear input fields
-    document.getElementById("newLinkTitle").value = "";
-    document.getElementById("newLinkURL").value = "";
-
-    // Close the modal
-    closeLinkAddingDialog();
+        // Close the modal
+        closeLinkAddingDialog();
+      })
+      .catch((error) => {
+        console.error("Error checking duplicate links:", error);
+      });
   } else {
     alert("Please enter both link title and URL");
   }
 }
-
 
 function createLinkContainer(link) {
   const linkDiv = document.createElement("div");
@@ -219,99 +230,3 @@ function openLink() {
 }
 
 
-function openIndexedDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open('WebCore', 7);
-
-    request.onupgradeneeded = function (event) {
-      const db = event.target.result;
-      if (!db.objectStoreNames.contains("backup")) {
-        db.createObjectStore("backup", { keyPath: "key" });
-      }
-    };
-
-    request.onsuccess = function (event) {
-      resolve(event.target.result);
-    };
-
-    request.onerror = function (event) {
-      reject(event.target.error);
-    };
-  });
-}
-
-// Function to sync data from Local Storage to IndexedDB with daily versioning
-async function syncLocalStorageToIndexedDB() {
-  try {
-    // Open or create IndexedDB
-    const db = await openIndexedDB();
-
-    // Get the current date
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set time to the start of the day
-
-    // Check if a version exists for today
-    const versionKey = today.getTime();
-    const existingVersion = await new Promise((resolve, reject) => {
-      const getRequest = db.transaction('backup').objectStore('backup').get(versionKey);
-      getRequest.onsuccess = function (event) {
-        resolve(event.target.result);
-      };
-      getRequest.onerror = function (event) {
-        reject(event.target.error);
-      };
-    });
-
-    // If a version already exists for today, update it with current data
-    if (existingVersion) {
-      const localStorageData = {
-        linkUsageData: localStorage.getItem("linkUsageData") || '{}',
-        walletData: localStorage.getItem("walletData") || '{}',
-        links: localStorage.getItem("links") || '[]',
-      };
-
-      existingVersion.value = localStorageData;
-      await new Promise((resolve, reject) => {
-        const updateRequest = db.transaction('backup', 'readwrite').objectStore('backup').put(existingVersion);
-        updateRequest.onsuccess = function () {
-          resolve();
-        };
-        updateRequest.onerror = function (event) {
-          reject(event.target.error);
-        };
-      });
-
-      console.log('Backup version updated.');
-    } else {
-      // Add new data from local storage to IndexedDB with timestamp for versioning
-      const timestamp = new Date().getTime();
-      const localStorageData = {
-        linkUsageData: localStorage.getItem("linkUsageData") || '{}',
-        walletData: localStorage.getItem("walletData") || '{}',
-        links: localStorage.getItem("links") || '[]',
-      };
-
-      await new Promise((resolve, reject) => {
-        const addRequest = db.transaction('backup', 'readwrite').objectStore('backup').add({ key: versionKey, value: localStorageData });
-        addRequest.onsuccess = function () {
-          resolve();
-        };
-        addRequest.onerror = function (event) {
-          reject(event.target.error);
-        };
-      });
-
-      console.log('New backup version created for today.');
-    }
-  } catch (error) {
-    console.error('Error:', error);
-  }
-}
-
-// Call the sync function initially
-syncLocalStorageToIndexedDB();
-
-// Set up a timer to periodically check for changes in Local Storage
-setInterval(function () {
-  syncLocalStorageToIndexedDB();
-}, 5000); // Adjust the interval (in milliseconds) as needed

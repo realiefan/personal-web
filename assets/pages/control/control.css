@@ -333,6 +333,12 @@ margin-top: 20px;
     color: #5e5cd5;
 }
 
+.space {
+    padding: 20px;
+
+
+}
+
 
 @keyframes slideUp {
     from {

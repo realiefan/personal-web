@@ -127,6 +127,8 @@ function setLinkUsageData(data) {
   localStorage.setItem("linkUsageData", JSON.stringify(data));
 }
 
+
+
 function fetchIcon(url) {
   const urlWithoutProtocol = url.replace(/^https?:\/\//, ""); // Remove "https://" or "http://"
   const iconURL = `https://icon.horse/icon/${urlWithoutProtocol}`;

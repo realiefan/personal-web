@@ -32,6 +32,7 @@ body {
     
 }
 
+
 .modal-content {
     background-color: #1e1e1e;
     padding: 20px;
@@ -134,6 +135,7 @@ body {
 
 .createAc {
     color: #5e5cd5;
+   
 }
 
 .openWalletButton {
