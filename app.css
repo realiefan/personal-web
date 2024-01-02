@@ -75,15 +75,15 @@ body {
 }
 
 .logoText {
-border: none;
+
   cursor: pointer;
   left: 0;
   top: 0;
   /* Apply the linear gradient to the text content of the logo */
     
   position: absolute;
-  margin: 5%;
-  margin-top: 0.7em;
+  margin: 4%;
+  
   
   
 
