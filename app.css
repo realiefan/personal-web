@@ -75,31 +75,18 @@ body {
 }
 
 .logoText {
-  font-family: Google Sans, Helvetica Neue, sans-serif;
-  position: absolute;
-  margin: 5%;
-  margin-top: 0.7em;
+
   left: 0;
   top: 0;
   /* Apply the linear gradient to the text content of the logo */
   
-  border: none;
-  cursor: pointer;
+  
   
 
 
 }
 
-.logoText a {
-  /* Reset the background-clip for the <a> element */
-  background-clip: initial;
-  /* Set the color to the desired color for the text */
 
-  /* Adjust the color to your preference */
-  text-decoration: none;
-
-  /* Optional: Remove the default underline for links */
-}
 
 
 
