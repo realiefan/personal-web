@@ -109,15 +109,26 @@
         </style>
         <script>
           function toggleFileInput() {
-            var fileInput = document.getElementById('file-selector');
+              var fileInput = document.getElementById('file-selector');
+              var backupAndBroadcastBtn = document.getElementById('fetch-and-broadcast');
+              var justBroadcastBtn = document.getElementById('just-broadcast');
+              var getFromExtensionBtn = document.getElementById('get-from-extension');
 
-            // Toggle the visibility of the file input
-            if (fileInput.style.display === 'none' || fileInput.style.display === '') {
-              fileInput.style.display = 'block';
-            } else {
-              fileInput.style.display = 'none';
+              // Toggle the visibility of the file input
+              if (fileInput.style.display === 'none' || fileInput.style.display === '') {
+                fileInput.style.display = 'block';
+                // Show buttons when the file input is visible
+                backupAndBroadcastBtn.style.display = 'block';
+                justBroadcastBtn.style.display = 'none'; // You can adjust this based on your requirement
+                getFromExtensionBtn.style.display = 'none'; // You can adjust this based on your requirement
+              } else {
+                fileInput.style.display = 'none';
+                // Hide buttons when the file input is hidden
+                backupAndBroadcastBtn.style.display = 'none';
+                justBroadcastBtn.style.display = 'none';
+                getFromExtensionBtn.style.display = 'none';
+              }
             }
-          }
         </script>
 
 

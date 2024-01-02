@@ -1,5 +1,8 @@
 // button click handler
 const fetchAndBroadcast = async () => {
+
+  const pubkeyValue = $("#pubkey").val();
+  localStorage.setItem("pubkey", pubkeyValue);
   // reset UI
   $('#fetching-status').html('')
   $('#fetching-progress').css('visibility', 'hidden')
@@ -92,9 +95,29 @@ const getFromExtension = async () => {
 }
 
 const pubkeyOnChange = () => {
-  $('#fetch-and-broadcast').css('display', '')
-  $('#get-from-extension').css('display', 'none')
-}
+  $("#fetch-and-broadcast").css("display", "");
+  $("#get-from-extension").css("display", "none");
+};
+
+// Function to retrieve and set the pubkey from localStorage on page load
+const retrievePubkeyFromLocalStorage = () => {
+  const pubkeyInput = $("#pubkey");
+
+  // Retrieve the pubkey from localStorage
+  const storedPubkey = localStorage.getItem("pubkey");
+
+  // Set the value in the input if it exists
+  if (storedPubkey !== null) {
+    pubkeyInput.val(storedPubkey);
+    pubkeyOnChange(); // Call the onchange function when setting the value
+  }
+};
+
+// Call the retrieve function on page load
+$(document).ready(function () {
+  retrievePubkeyFromLocalStorage();
+});
+
 
 if (window.nostr) {
   $('#fetch-and-broadcast').css('display', 'none')

@@ -104,12 +104,19 @@
     
     <!-- Modal overlay for the iframe -->
     <div id="iframeModal">
-        <button id="closeButton" onclick="closeIframeModal()">X</button>
+        <button id="closeButton" onclick="closeIframeModal()">
+            <!-- SVG for close button -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </button>
         <div id="iframeContainer">
             <iframe id="signupIframe"></iframe>
         </div>
-        </div>
-        </div>
+    </div>
+
         
 
         
