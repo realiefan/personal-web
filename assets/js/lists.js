@@ -67,26 +67,31 @@ function createLinkContainer(link) {
 
   linkDiv.appendChild(linkButton);
 
-  // Fetch icon and append it to the link container
+  // Fetch icon asynchronously and append it to the link container
   fetchIcon(link.url)
     .then((iconURL) => {
-      const icon = document.createElement("img");
-      icon.src = iconURL;
-      icon.alt = `${link.title} Icon`;
-      icon.className = "link-icon";
+      return new Promise((resolve) => {
+        const icon = document.createElement("img");
+        icon.src = iconURL;
+        icon.alt = `${link.title} Icon`;
+        icon.className = "link-icon";
 
-      // Modify the event listener for the icon
-      icon.addEventListener("click", (event) => {
-        event.preventDefault(); // Prevent the default behavior of following the link
+        // Modify the event listener for the icon
+        icon.addEventListener("click", (event) => {
+          event.preventDefault(); // Prevent the default behavior of following the link
 
-        // Increment click count for the URL
-        updateLinkClickCount(link.url, link.title); // Pass title as additional information
+          // Increment click count for the URL
+          updateLinkClickCount(link.url, link.title); // Pass title as additional information
 
-        // Open the link URL in a new window
-        window.open(link.url, "_self");
+          // Open the link URL in a new window
+          window.open(link.url, "_self");
+        });
+
+        // Append icon to the link container
+        linkDiv.insertBefore(icon, linkButton); // Insert icon before the button
+
+        resolve(); // Resolve the promise once the icon is appended
       });
-
-      linkDiv.insertBefore(icon, linkButton); // Insert icon before the button
     })
     .catch((error) => {
       console.error("Error fetching icon:", error);
@@ -94,6 +99,13 @@ function createLinkContainer(link) {
 
   return linkDiv;
 }
+
+function fetchIcon(url) {
+  const urlWithoutProtocol = url.replace(/^https?:\/\//, ""); // Remove "https://" or "http://"
+  const iconURL = `https://icon.horse/icon/${urlWithoutProtocol}`;
+  return Promise.resolve(iconURL);
+}
+
 
 function updateLinkClickCount(url, title) {
   const linkUsageData = getLinkUsageData();
@@ -129,11 +141,7 @@ function setLinkUsageData(data) {
 
 
 
-function fetchIcon(url) {
-  const urlWithoutProtocol = url.replace(/^https?:\/\//, ""); // Remove "https://" or "http://"
-  const iconURL = `https://icon.horse/icon/${urlWithoutProtocol}`;
-  return Promise.resolve(iconURL);
-}
+
 
 function loadLinks() {
   const linkContainer = document.getElementById("linksContainer");
