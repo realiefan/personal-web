@@ -37,7 +37,7 @@ self.addEventListener("notificationclick", (event) => {
   console.log("Notification Clicked");
   event.notification.close();
 
-  const url = "https://webcore.live/assets/pages/backup/backup.html";
+  const url = "https://webcore.live";
 
   event.waitUntil(
     clients.matchAll({
