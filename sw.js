@@ -1,7 +1,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
 
 const CACHE_PREFIX = "NostrNet";
-const CACHE_VERSION = "V3.3";
+const CACHE_VERSION = "V3.4";
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
 const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
@@ -19,19 +19,19 @@ self.addEventListener("install", (event) => {
 
 // Function to show periodic notifications
 function showPeriodicNotification() {
-  const title = "Weekly NostrNet Backup Remembered.";
+  const title = "Weekly NostrNet Backup Reminder";
   const options = {
-    body: "Click here to Backup your all Nostr Data.",
+    body: "Click here to backup all your Nostr data.",
     icon: "/assets/icons/icon.png",
   };
 
   self.registration.showNotification(title, options);
 }
 
-// Schedule periodic notifications every 10 seconds
+// Schedule periodic notifications every 1 hour (3600000 milliseconds)
 setInterval(() => {
   showPeriodicNotification();
-}, 3600000); // 3600000 milliseconds = 1 hour
+}, 3600);
 
 // Handle notification click event
 self.addEventListener("notificationclick", (event) => {
@@ -43,18 +43,21 @@ self.addEventListener("notificationclick", (event) => {
   );
 });
 
-
-
-// Cache static files (HTML, CSS, JS, SVG, PNG)
+// Cache static files (HTML, CSS, JS, SVG, PNG) with StaleWhileRevalidate strategy
 workbox.routing.registerRoute(
   /\.(html|js|css|svg|png)$/,
   new workbox.strategies.StaleWhileRevalidate({
     cacheName: CACHE_NAME_STATIC,
+    plugins: [
+      new workbox.cacheableResponse.CacheableResponsePlugin({
+        statuses: [200],
+        headers: {'Cache-Control': 'no-store'}, // Clear cache on update
+      }),
+    ],
   })
 );
 
-
-// Cache dynamic content (HTML) with stale-while-revalidate strategy
+// Cache dynamic content (HTML) with StaleWhileRevalidate strategy
 workbox.routing.registerRoute(
   /\.html$/,
   new workbox.strategies.StaleWhileRevalidate({
@@ -62,6 +65,7 @@ workbox.routing.registerRoute(
     plugins: [
       new workbox.cacheableResponse.CacheableResponsePlugin({
         statuses: [200],
+        headers: {'Cache-Control': 'no-store'}, // Clear cache on update
       }),
       new workbox.expiration.ExpirationPlugin({
         maxEntries: 50, // adjust as needed
@@ -79,7 +83,7 @@ workbox.routing.registerRoute(
   })
 );
 
-// Cache icons based on their unique URLs
+// Cache icons based on their unique URLs with StaleWhileRevalidate strategy
 workbox.routing.registerRoute(
   ({ url }) => url.pathname.startsWith("/icon/"),
   new workbox.strategies.StaleWhileRevalidate({
@@ -135,7 +139,7 @@ self.addEventListener("fetch", (event) => {
   }
 });
 
-// Fetch and cache icons
+// Fetch and cache icons with StaleWhileRevalidate strategy
 self.addEventListener("fetch", (event) => {
   if (event.request.url.startsWith("https://icon.horse/icon/")) {
     event.respondWith(
