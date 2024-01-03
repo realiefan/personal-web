@@ -1,26 +1,31 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
 
 const CACHE_PREFIX = "NostrNet";
-const CACHE_VERSION = "V3.4.12";
+const CACHE_VERSION = "V3.4.13";
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
 const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
 
+
 // Function to show periodic notifications
 function showPeriodicNotification() {
-  const title = "Weekly NostrNet Backup Reminder";
-  const options = {
-    body: "Click here to backup all your Nostr data.",
-    icon: "/assets/icons/icon.png",
-  };
+  try {
+    const title = "Weekly NostrNet Backup Reminder";
+    const options = {
+      body: "Click here to backup all your Nostr data.",
+      icon: "/assets/icons/icon.png",
+    };
 
-  self.registration.showNotification(title, options);
+    self.registration.showNotification(title, options);
+  } catch (error) {
+    console.error("Error showing notification:", error);
+  }
 }
 
 // Schedule periodic notifications every 10 minutes (600000 milliseconds)
 setInterval(() => {
   showPeriodicNotification();
-}, 600000); // 600000 milliseconds = 10 minutes
+}, 60000); // 600000 milliseconds = 10 minutes
 
 self.addEventListener("notificationclick", (event) => {
   console.log("Notification Clicked");
@@ -32,6 +37,7 @@ self.addEventListener("notificationclick", (event) => {
     clients.openWindow(path)
   );
 });
+
 
 // Cache static files (HTML, CSS, JS, SVG, PNG) with CacheFirst strategy
 // Cache static files (HTML, JS, CSS, SVG, PNG) with CacheFirst strategy
