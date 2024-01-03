@@ -6,14 +6,26 @@ const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
 const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
 
-// Request notification permission during installation
+workbox.setConfig({
+  debug: false, // Set to true for development
+});
+
+// Precache static assets during installation
+workbox.precaching.precacheAndRoute([
+  { url: '/', revision: null }, // Add your static assets here
+]);
+
+// Handle notification permission outside of install event
 self.addEventListener("install", (event) => {
+  event.waitUntil(self.skipWaiting());
+});
+
+self.addEventListener("activate", (event) => {
   event.waitUntil(
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted") {
-        showNotification("Notification Permission Granted!", "You can now receive notifications.");
-      }
-    })
+    Promise.all([
+      cleanupCaches([CACHE_NAME_STATIC, CACHE_NAME_DYNAMIC]),
+      cleanupIconCache(),
+    ])
   );
 });
 
@@ -65,7 +77,7 @@ workbox.routing.registerRoute(
     plugins: [
       new workbox.cacheableResponse.CacheableResponsePlugin({
         statuses: [200],
-        headers: {'Cache-Control': 'no-store'}, // Clear cache on update
+        headers: { 'Cache-Control': 'no-store' }, // Clear cache on update
       }),
     ],
   })
@@ -79,7 +91,7 @@ workbox.routing.registerRoute(
     plugins: [
       new workbox.cacheableResponse.CacheableResponsePlugin({
         statuses: [200],
-        headers: {'Cache-Control': 'no-store'}, // Clear cache on update
+        headers: { 'Cache-Control': 'no-store' }, // Clear cache on update
       }),
       new workbox.expiration.ExpirationPlugin({
         maxEntries: 50, // adjust as needed
@@ -110,21 +122,6 @@ workbox.routing.registerRoute(
     ],
   })
 );
-
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    Promise.all([
-      cleanupCaches([CACHE_NAME_STATIC, CACHE_NAME_DYNAMIC]),
-      cleanupIconCache(),
-    ])
-  );
-});
-
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting();
-  }
-});
 
 // Background sync to update the cache
 workbox.routing.registerRoute(
@@ -194,4 +191,4 @@ async function cleanupIconCache() {
       .filter((request) => !uniqueURLs.has(request.url))
       .map((request) => iconCache.delete(request))
   );
-}
+        }
