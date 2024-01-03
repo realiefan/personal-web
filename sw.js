@@ -34,12 +34,27 @@ setInterval(() => {
 }, 3600);
 
 // Handle notification click event
+// Handle notification click event
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
   const url = "https://webcore.live/assets/pages/backup/backup.html"; // Replace with the URL you want to open
+
   event.waitUntil(
-    clients.openWindow(url)
+    clients.matchAll({
+      type: "window",
+      includeUncontrolled: true,
+    }).then((windowClients) => {
+      // Check if any PWA window is already open
+      for (const client of windowClients) {
+        if (client.url === url && 'focus' in client) {
+          return client.focus();
+        }
+      }
+
+      // If no matching PWA window is open, open a new one
+      return clients.openWindow(url);
+    })
   );
 });
 
