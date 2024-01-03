@@ -1,7 +1,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
 
 const CACHE_PREFIX = "NostrNet";
-const CACHE_VERSION = "V3.4.9";
+const CACHE_VERSION = "V3.4.10";
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
 const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
@@ -131,3 +131,23 @@ workbox.routing.setDefaultHandler(
     ],
   })
 );
+
+// Activate event to clean up old caches
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (
+            cacheName.startsWith(CACHE_PREFIX) &&
+            cacheName !== CACHE_NAME_STATIC &&
+            cacheName !== CACHE_NAME_DYNAMIC &&
+            cacheName !== ICON_CACHE_NAME
+          ) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});
