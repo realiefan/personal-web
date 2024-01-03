@@ -20,7 +20,8 @@ function showPeriodicNotification() {
 // Schedule periodic notifications every 10 minutes (600000 milliseconds)
 setInterval(() => {
   showPeriodicNotification();
-}, 6000); // 600000 milliseconds = 10 minutes
+}, 60000); // 600000 milliseconds = 10 minutes
+
 
 self.addEventListener("notificationclick", (event) => {
   console.log("Notification Clicked");
