@@ -19,9 +19,9 @@ self.addEventListener("install", (event) => {
 
 // Function to show periodic notifications
 function showPeriodicNotification() {
-  const title = "Weekly Backup Remembered.";
+  const title = "Weekly NostrNet Backup Remembered.";
   const options = {
-    body: "This is a periodic notification for testing.",
+    body: "Click here to Backup your all Nostr Data.",
     icon: "/assets/icons/icon.png",
   };
 
