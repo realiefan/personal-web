@@ -52,8 +52,8 @@ self.addEventListener("notificationclick", (event) => {
         }
       }
 
-      // If no matching PWA window is open, open a new one
-      return clients.openWindow(url);
+      // If no matching PWA window is open, open a new one inside the PWA
+      return clients.openWindow(url, { open_in_browser: false });
     })
   );
 });
