@@ -34,6 +34,7 @@ self.addEventListener("notificationclick", (event) => {
 });
 
 // Cache static files (HTML, CSS, JS, SVG, PNG) with CacheFirst strategy
+// Cache static files (HTML, JS, CSS, SVG, PNG) with CacheFirst strategy
 workbox.routing.registerRoute(
   /\.(html|js|css|svg|png)$/,
   new workbox.strategies.CacheFirst({
@@ -49,7 +50,7 @@ workbox.routing.registerRoute(
 
 // Cache dynamic content (HTML) with StaleWhileRevalidate strategy
 workbox.routing.registerRoute(
-  /\.html$/,
+  /\.(html|js)$/, // Include JS files in StaleWhileRevalidate strategy
   new workbox.strategies.StaleWhileRevalidate({
     cacheName: CACHE_NAME_DYNAMIC,
     plugins: [
