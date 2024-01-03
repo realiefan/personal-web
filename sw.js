@@ -1,7 +1,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
 
 const CACHE_PREFIX = "NostrNet";
-const CACHE_VERSION = "V3.4.4";
+const CACHE_VERSION = "V3.4.6";
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
 const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
@@ -46,15 +46,15 @@ self.addEventListener("notificationclick", (event) => {
   );
 });
 
-// Cache static files (HTML, CSS, JS, SVG, PNG) with StaleWhileRevalidate strategy
+// Cache static files (HTML, CSS, JS, SVG, PNG) with CacheFirst strategy
 workbox.routing.registerRoute(
   /\.(html|js|css|svg|png)$/,
-  new workbox.strategies.StaleWhileRevalidate({
+  new workbox.strategies.CacheFirst({
     cacheName: CACHE_NAME_STATIC,
     plugins: [
       new workbox.cacheableResponse.CacheableResponsePlugin({
         statuses: [200],
-        headers: {'Cache-Control': 'no-store'}, // Clear cache on update
+        headers: {'Cache-Control': 'public, max-age=31536000'}, // Cache for 1 year
       }),
     ],
   })
@@ -68,8 +68,21 @@ workbox.routing.registerRoute(
     plugins: [
       new workbox.cacheableResponse.CacheableResponsePlugin({
         statuses: [200],
-        headers: {'Cache-Control': 'no-store'}, // Clear cache on update
+        headers: {'Cache-Control': 'public, max-age=600'}, // Cache for 10 minutes
       }),
+      new workbox.expiration.ExpirationPlugin({
+        maxEntries: 50, // adjust as needed
+      }),
+    ],
+  })
+);
+
+// Cache images using the CacheFirst strategy
+workbox.routing.registerRoute(
+  /\.(png|jpg|jpeg|gif)$/,
+  new workbox.strategies.CacheFirst({
+    cacheName: CACHE_NAME_STATIC,
+    plugins: [
       new workbox.expiration.ExpirationPlugin({
         maxEntries: 50, // adjust as needed
         maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
@@ -78,18 +91,10 @@ workbox.routing.registerRoute(
   })
 );
 
-// Cache images using the cache-first strategy
-workbox.routing.registerRoute(
-  /\.(png|jpg|jpeg|gif)$/,
-  new workbox.strategies.CacheFirst({
-    cacheName: CACHE_NAME_STATIC,
-  })
-);
-
-// Cache icons based on their unique URLs with StaleWhileRevalidate strategy
+// Cache icons based on their unique URLs with CacheFirst strategy
 workbox.routing.registerRoute(
   ({ url }) => url.pathname.startsWith("/icon/"),
-  new workbox.strategies.StaleWhileRevalidate({
+  new workbox.strategies.CacheFirst({
     cacheName: ICON_CACHE_NAME,
     plugins: [
       new workbox.expiration.ExpirationPlugin({
@@ -100,101 +105,42 @@ workbox.routing.registerRoute(
   })
 );
 
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    Promise.all([
-      cleanupCaches([CACHE_NAME_STATIC, CACHE_NAME_DYNAMIC]),
-      cleanupIconCache(),
-    ])
-  );
-});
-
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting();
-  }
-});
-
-// Background sync to update the cache
-workbox.routing.registerRoute(
-  /\.(html|js|css|svg|png)$/,
-  new workbox.strategies.StaleWhileRevalidate({
-    cacheName: CACHE_NAME_STATIC,
-  }),
-  "GET"
-);
-
-// Enable Background Sync for reliable updates
+// Background sync to update the cache for dynamic content
 const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('bgSyncQueue', {
   maxRetentionTime: 24 * 60, // Retry for up to 24 hours
 });
 
 workbox.routing.registerRoute(
-  /\.(html|js|css|svg|png)$/,
+  /\.html$/,
   new workbox.strategies.StaleWhileRevalidate({
-    cacheName: CACHE_NAME_STATIC,
+    cacheName: CACHE_NAME_DYNAMIC,
     plugins: [bgSyncPlugin],
   }),
   "POST"
 );
 
-// Enable Navigation Preload
-self.addEventListener("fetch", (event) => {
-  if (event.request.mode === "navigate" && self.registration.navigationPreload) {
-    event.respondWith(
-      (async () => {
-        const preloadResponse = await event.preloadResponse;
+// Cache navigation requests using NetworkFirst strategy
+workbox.routing.registerRoute(
+  ({ event }) => event.request.mode === "navigate",
+  new workbox.strategies.NetworkFirst({
+    cacheName: CACHE_NAME_STATIC,
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxEntries: 50, // adjust as needed
+      }),
+    ],
+  })
+);
 
-        if (preloadResponse) {
-          return preloadResponse;
-        }
-
-        const networkResponse = await fetch(event.request);
-        return networkResponse;
-      })()
-    );
-  }
-});
-
-// Fetch and cache icons with StaleWhileRevalidate strategy
-self.addEventListener("fetch", (event) => {
-  if (event.request.url.startsWith("https://icon.horse/icon/")) {
-    event.respondWith(
-      caches.match(event.request).then((cachedResponse) => {
-        return (
-          cachedResponse ||
-          fetch(event.request).then((networkResponse) => {
-            caches.open(ICON_CACHE_NAME).then((cache) => {
-              cache.put(event.request, networkResponse.clone());
-            });
-            return networkResponse;
-          })
-        );
-      })
-    );
-  }
-});
-
-// Utility function to cleanup old caches
-async function cleanupCaches(keepCaches) {
-  const cacheNames = await caches.keys();
-  return Promise.all(
-    cacheNames
-      .filter(
-        (cache) => cache.startsWith(CACHE_PREFIX) && !keepCaches.some((keepCache) => cache.includes(keepCache))
-      )
-      .map((cache) => caches.delete(cache))
-  );
-}
-
-// Utility function to cleanup old icon cache entries
-async function cleanupIconCache() {
-  const iconCache = await caches.open(ICON_CACHE_NAME);
-  const requests = await iconCache.keys();
-  const uniqueURLs = new Set(requests.map((request) => request.url));
-  return Promise.all(
-    requests
-      .filter((request) => !uniqueURLs.has(request.url))
-      .map((request) => iconCache.delete(request))
-  );
-                    }
+// Cache everything else using NetworkFirst strategy
+workbox.routing.setDefaultHandler(
+  new workbox.strategies.NetworkFirst({
+    cacheName: CACHE_NAME_STATIC,
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxEntries: 50, // adjust as needed
+        maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
+      }),
+    ],
+  })
+);
