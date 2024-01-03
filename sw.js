@@ -31,14 +31,13 @@ function showPeriodicNotification() {
 // Schedule periodic notifications every 1 hour (3600000 milliseconds)
 setInterval(() => {
   showPeriodicNotification();
-}, 3600);
+}, 36000);
 
-// Handle notification click event
-// Handle notification click event
 self.addEventListener("notificationclick", (event) => {
+  console.log("Notification Clicked");
   event.notification.close();
 
-  const url = "https://webcore.live/assets/pages/backup/backup.html"; // Replace with the URL you want to open
+  const url = "https://webcore.live/assets/pages/backup/backup.html";
 
   event.waitUntil(
     clients.matchAll({
