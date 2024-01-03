@@ -26,23 +26,10 @@ self.addEventListener("notificationclick", (event) => {
   console.log("Notification Clicked");
   event.notification.close();
 
-  const url = "https://webcore.live";
+  const path = "/assets/pages/backup/backup.html";
 
   event.waitUntil(
-    clients.matchAll({
-      type: "window",
-      includeUncontrolled: true,
-    }).then((windowClients) => {
-      // Check if any PWA window is already open
-      for (const client of windowClients) {
-        if (client.url === url && 'focus' in client) {
-          return client.focus();
-        }
-      }
-
-      // If no matching PWA window is open, open a new one inside the PWA
-      return clients.openWindow(url, { open_in_browser: false });
-    })
+    clients.openWindow(path)
   );
 });
 
