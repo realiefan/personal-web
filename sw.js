@@ -19,7 +19,7 @@ self.addEventListener("install", (event) => {
 
 // Function to show periodic notifications
 function showPeriodicNotification() {
-  const title = "Weekly Backup Remembered";
+  const title = "Weekly Backup Remembered.";
   const options = {
     body: "This is a periodic notification for testing.",
     icon: "/assets/icons/icon.png",
