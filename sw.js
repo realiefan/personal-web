@@ -7,10 +7,10 @@ const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
 const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
 
 
-// Function to show periodic notifications
-function showPeriodicNotification() {
-  trylet retryCount = 0;
 
+let retryCount = 0;
+
+// Function to show periodic notifications
 function showPeriodicNotification() {
   try {
     const title = "Weekly NostrNet Backup Reminder";
@@ -30,6 +30,7 @@ function showPeriodicNotification() {
   }
 }
 
+// Function to schedule periodic notifications
 function scheduleNotification() {
   requestIdleCallback(() => {
     showPeriodicNotification();
@@ -47,6 +48,9 @@ Notification.requestPermission().then((permission) => {
   }
 });
 
+  
+
+// Event listener for notification click
 self.addEventListener("notificationclick", (event) => {
   console.log("Notification Clicked");
   event.notification.close();
@@ -57,7 +61,6 @@ self.addEventListener("notificationclick", (event) => {
     clients.openWindow(path)
   );
 });
-
 
   
 // Cache static files (HTML, JS, CSS, SVG, PNG) with CacheFirst strategy
