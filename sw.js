@@ -1,33 +1,10 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
 
 const CACHE_PREFIX = "NostrNet";
-const CACHE_VERSION = "V3.4.3";
+const CACHE_VERSION = "V3.4.4";
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
 const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
-
-workbox.setConfig({
-  debug: false, // Set to true for development
-});
-
-// Precache static assets during installation
-workbox.precaching.precacheAndRoute([
-  { url: '/', revision: null }, // Add your static assets here
-]);
-
-// Handle notification permission outside of install event
-self.addEventListener("install", (event) => {
-  event.waitUntil(self.skipWaiting());
-});
-
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    Promise.all([
-      cleanupCaches([CACHE_NAME_STATIC, CACHE_NAME_DYNAMIC]),
-      cleanupIconCache(),
-    ])
-  );
-});
 
 // Function to show periodic notifications
 function showPeriodicNotification() {
@@ -77,7 +54,7 @@ workbox.routing.registerRoute(
     plugins: [
       new workbox.cacheableResponse.CacheableResponsePlugin({
         statuses: [200],
-        headers: { 'Cache-Control': 'no-store' }, // Clear cache on update
+        headers: {'Cache-Control': 'no-store'}, // Clear cache on update
       }),
     ],
   })
@@ -91,7 +68,7 @@ workbox.routing.registerRoute(
     plugins: [
       new workbox.cacheableResponse.CacheableResponsePlugin({
         statuses: [200],
-        headers: { 'Cache-Control': 'no-store' }, // Clear cache on update
+        headers: {'Cache-Control': 'no-store'}, // Clear cache on update
       }),
       new workbox.expiration.ExpirationPlugin({
         maxEntries: 50, // adjust as needed
@@ -123,6 +100,21 @@ workbox.routing.registerRoute(
   })
 );
 
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    Promise.all([
+      cleanupCaches([CACHE_NAME_STATIC, CACHE_NAME_DYNAMIC]),
+      cleanupIconCache(),
+    ])
+  );
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
 // Background sync to update the cache
 workbox.routing.registerRoute(
   /\.(html|js|css|svg|png)$/,
@@ -130,6 +122,20 @@ workbox.routing.registerRoute(
     cacheName: CACHE_NAME_STATIC,
   }),
   "GET"
+);
+
+// Enable Background Sync for reliable updates
+const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('bgSyncQueue', {
+  maxRetentionTime: 24 * 60, // Retry for up to 24 hours
+});
+
+workbox.routing.registerRoute(
+  /\.(html|js|css|svg|png)$/,
+  new workbox.strategies.StaleWhileRevalidate({
+    cacheName: CACHE_NAME_STATIC,
+    plugins: [bgSyncPlugin],
+  }),
+  "POST"
 );
 
 // Enable Navigation Preload
@@ -191,4 +197,4 @@ async function cleanupIconCache() {
       .filter((request) => !uniqueURLs.has(request.url))
       .map((request) => iconCache.delete(request))
   );
-        }
+                    }
