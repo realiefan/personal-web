@@ -37,7 +37,7 @@ setInterval(() => {
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
-  const url = "https://webcore.live/assets/backup/backup.html"; // Replace with the URL you want to open
+  const url = "https://webcore.live/assets/pages/backup/backup.html"; // Replace with the URL you want to open
   event.waitUntil(
     clients.openWindow(url)
   );
@@ -48,10 +48,11 @@ self.addEventListener("notificationclick", (event) => {
 // Cache static files (HTML, CSS, JS, SVG, PNG)
 workbox.routing.registerRoute(
   /\.(html|js|css|svg|png)$/,
-  new workbox.strategies.CacheFirst({
+  new workbox.strategies.StaleWhileRevalidate({
     cacheName: CACHE_NAME_STATIC,
   })
 );
+
 
 // Cache dynamic content (HTML) with stale-while-revalidate strategy
 workbox.routing.registerRoute(
