@@ -1,7 +1,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
 
 const CACHE_PREFIX = "NostrNet";
-const CACHE_VERSION = "V3.4.10";
+const CACHE_VERSION = "V3.4.11";
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
 const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
@@ -20,8 +20,7 @@ function showPeriodicNotification() {
 // Schedule periodic notifications every 10 minutes (600000 milliseconds)
 setInterval(() => {
   showPeriodicNotification();
-}, 60000); // 600000 milliseconds = 10 minutes
-
+}, 600000); // 600000 milliseconds = 10 minutes
 
 self.addEventListener("notificationclick", (event) => {
   console.log("Notification Clicked");
@@ -42,7 +41,7 @@ workbox.routing.registerRoute(
     plugins: [
       new workbox.cacheableResponse.CacheableResponsePlugin({
         statuses: [200],
-        headers: {'Cache-Control': 'public, max-age=31536000'}, // Cache for 1 year
+        headers: { 'Cache-Control': 'public, max-age=31536000' }, // Cache for 1 year
       }),
     ],
   })
@@ -56,7 +55,7 @@ workbox.routing.registerRoute(
     plugins: [
       new workbox.cacheableResponse.CacheableResponsePlugin({
         statuses: [200],
-        headers: {'Cache-Control': 'public, max-age=600'}, // Cache for 10 minutes
+        headers: { 'Cache-Control': 'public, max-age=600' }, // Cache for 10 minutes
       }),
       new workbox.expiration.ExpirationPlugin({
         maxEntries: 50, // adjust as needed
@@ -69,7 +68,7 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
   /\.(png|jpg|jpeg|gif)$/,
   new workbox.strategies.CacheFirst({
-    cacheName: CACHE_NAME_STATIC,
+    cacheName: `${CACHE_PREFIX}-images`,
     plugins: [
       new workbox.expiration.ExpirationPlugin({
         maxEntries: 50, // adjust as needed
