@@ -9,6 +9,9 @@ const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
 
 // Function to show periodic notifications
 function showPeriodicNotification() {
+  trylet retryCount = 0;
+
+function showPeriodicNotification() {
   try {
     const title = "Weekly NostrNet Backup Reminder";
     const options = {
@@ -19,13 +22,30 @@ function showPeriodicNotification() {
     self.registration.showNotification(title, options);
   } catch (error) {
     console.error("Error showing notification:", error);
+    const retryInterval = Math.min(600000, 1000 * Math.pow(2, retryCount));
+    setTimeout(() => {
+      retryCount++;
+      showPeriodicNotification();
+    }, retryInterval);
   }
 }
 
-// Schedule periodic notifications every 10 minutes (600000 milliseconds)
-setInterval(() => {
-  showPeriodicNotification();
-}, 60000); // 600000 milliseconds = 10 minutes
+function scheduleNotification() {
+  requestIdleCallback(() => {
+    showPeriodicNotification();
+    scheduleNotification(); // Reschedule itself recursively
+  });
+}
+
+// Request notification permissions
+Notification.requestPermission().then((permission) => {
+  if (permission === "granted") {
+    scheduleNotification(); // Start scheduling
+    saveNotificationSchedule(600000); // Persist schedule (example interval)
+  } else {
+    console.warn("Notification permission denied.");
+  }
+});
 
 self.addEventListener("notificationclick", (event) => {
   console.log("Notification Clicked");
@@ -39,7 +59,7 @@ self.addEventListener("notificationclick", (event) => {
 });
 
 
-// Cache static files (HTML, CSS, JS, SVG, PNG) with CacheFirst strategy
+  
 // Cache static files (HTML, JS, CSS, SVG, PNG) with CacheFirst strategy
 workbox.routing.registerRoute(
   /\.(html|js|css|svg|png)$/,
