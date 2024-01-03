@@ -6,13 +6,23 @@ const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
 const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
 
+// Request notification permission during installation
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        showNotification("Notification Permission Granted!", "You can now receive notifications.");
+      }
+    })
+  );
+});
 
 // Function to show periodic notifications
 function showPeriodicNotification() {
-  const title = "Periodic Notification";
+  const title = "Weekly Backup Remembered";
   const options = {
     body: "This is a periodic notification for testing.",
-    icon: "/assests/icons/icon.png",
+    icon: "/assets/icons/icon.png",
   };
 
   self.registration.showNotification(title, options);
@@ -22,6 +32,16 @@ function showPeriodicNotification() {
 setInterval(() => {
   showPeriodicNotification();
 }, 10000);
+
+// Handle notification click event
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  const url = "https://webcore.live/assets/backup/backup.html"; // Replace with the URL you want to open
+  event.waitUntil(
+    clients.openWindow(url)
+  );
+});
 
 
 
