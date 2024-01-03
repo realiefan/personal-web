@@ -28,10 +28,10 @@ function showPeriodicNotification() {
   self.registration.showNotification(title, options);
 }
 
-// Schedule periodic notifications every 1 hour (3600000 milliseconds)
+// Schedule periodic notifications every one week (604800000 milliseconds)
 setInterval(() => {
   showPeriodicNotification();
-}, 36000);
+}, 604800000); // 604800000 milliseconds = 1 week
 
 self.addEventListener("notificationclick", (event) => {
   console.log("Notification Clicked");
