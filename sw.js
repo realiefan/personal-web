@@ -1,7 +1,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
 
 const CACHE_PREFIX = "NostrNet";
-const CACHE_VERSION = "V3.1";
+const CACHE_VERSION = "V3.3";
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
 const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
@@ -31,7 +31,7 @@ function showPeriodicNotification() {
 // Schedule periodic notifications every 10 seconds
 setInterval(() => {
   showPeriodicNotification();
-}, 1000);
+}, 3600000); // 3600000 milliseconds = 1 hour
 
 // Handle notification click event
 self.addEventListener("notificationclick", (event) => {
