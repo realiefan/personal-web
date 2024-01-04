@@ -3,7 +3,7 @@ importScripts(
 );
 
 const CACHE_PREFIX = "NostrNet";
-const CACHE_VERSION = "V3.4.17";
+const CACHE_VERSION = "V3.4.18";
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
 const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
@@ -123,19 +123,25 @@ workbox.routing.setDefaultHandler(
   })
 );
 
+
+
 // Periodic Notifications every 1 minute
 const showPeriodicNotification = async () => {
-  const title = "WebCore Backup Reminder";
-  const options = {
-    body: "Click here to backup your nostr data",
-    icon: "/assets/icons/icon.png", // Replace with the correct path
-  };
+  try {
+    const title = "WebCore Backup Reminder";
+    const options = {
+      body: "Click here to backup your nostr data",
+      icon: "/assets/icons/icon.png", // Replace with the correct path
+    };
 
-  // Use Workbox background sync to ensure reliability
-  await bgSyncPlugin._saveNotification({ title, options });
+    // Use Workbox background sync to ensure reliability
+    await bgSyncPlugin._saveNotification({ title, options });
 
-  // Display the notification
-  self.registration.showNotification(title, options);
+    // Display the notification
+    self.registration.showNotification(title, options);
+  } catch (error) {
+    console.error("Error in showPeriodicNotification:", error);
+  }
 };
 
 // Schedule periodic notifications
