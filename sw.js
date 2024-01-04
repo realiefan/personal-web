@@ -1,121 +1,70 @@
-importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
+importScripts(
+  "https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js"
+);
 
 const CACHE_PREFIX = "NostrNet";
-const CACHE_VERSION = "V3.4.14";
+const CACHE_VERSION = "V3.4.17";
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
 const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
 
-
-
-let retryCount = 0;
-
-// Function to show periodic notifications
-function showPeriodicNotification() {
-  try {
-    const title = "Weekly NostrNet Backup Reminder";
-    const options = {
-      body: "Click here to backup all your Nostr data.",
-      icon: "/assets/icons/icon.png",
-    };
-
-    self.registration.showNotification(title, options);
-  } catch (error) {
-    console.error("Error showing notification:", error);
-    const retryInterval = Math.min(600000, 1000 * Math.pow(2, retryCount));
-    setTimeout(() => {
-      retryCount++;
-      showPeriodicNotification();
-    }, retryInterval);
-  }
-}
-
-// Function to schedule periodic notifications
-function scheduleNotification() {
-  requestIdleCallback(() => {
-    showPeriodicNotification();
-    scheduleNotification(); // Reschedule itself recursively
-  });
-}
-
-// Request notification permissions
-Notification.requestPermission().then((permission) => {
-  if (permission === "granted") {
-    scheduleNotification(); // Start scheduling
-    saveNotificationSchedule(600000); // Persist schedule (example interval)
-  } else {
-    console.warn("Notification permission denied.");
-  }
-});
-
-  
-
-// Event listener for notification click
-self.addEventListener("notificationclick", (event) => {
-  console.log("Notification Clicked");
-  event.notification.close();
-
-  const path = "/assets/pages/backup/backup.html";
-
-  event.waitUntil(
-    clients.openWindow(path)
+// Function to handle cache cleanup on activate
+const cleanupOldCaches = async () => {
+  const cacheNames = await caches.keys();
+  return Promise.all(
+    cacheNames.map((cacheName) => {
+      if (
+        cacheName.startsWith(CACHE_PREFIX) &&
+        ![CACHE_NAME_STATIC, CACHE_NAME_DYNAMIC, ICON_CACHE_NAME].includes(
+          cacheName
+        )
+      ) {
+        return caches.delete(cacheName);
+      }
+    })
   );
+};
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(Promise.all([cleanupOldCaches(), scheduleNotifications()]));
 });
 
-  
-// Cache static files (HTML, JS, CSS, SVG, PNG) with CacheFirst strategy
+// Cache static files (HTML, JS, CSS, SVG, PNG) with StaleWhileRevalidate strategy
 workbox.routing.registerRoute(
-  /\.(html|js|css|svg|png)$/,
-  new workbox.strategies.CacheFirst({
+  /\.(html|js|css|svg|png|jpg|jpeg|gif)$/,
+  new workbox.strategies.StaleWhileRevalidate({
     cacheName: CACHE_NAME_STATIC,
     plugins: [
       new workbox.cacheableResponse.CacheableResponsePlugin({
         statuses: [200],
-        headers: { 'Cache-Control': 'public, max-age=31536000' }, // Cache for 1 year
+        headers: { "Cache-Control": "public, max-age=31536000" }, // Cache for 1 year
       }),
     ],
   })
 );
 
-// Cache dynamic content (HTML) with StaleWhileRevalidate strategy
-workbox.routing.registerRoute(
-  /\.(html|js)$/, // Include JS files in StaleWhileRevalidate strategy
-  new workbox.strategies.StaleWhileRevalidate({
-    cacheName: CACHE_NAME_DYNAMIC,
-    plugins: [
-      new workbox.cacheableResponse.CacheableResponsePlugin({
-        statuses: [200],
-        headers: { 'Cache-Control': 'public, max-age=600' }, // Cache for 10 minutes
-      }),
-      new workbox.expiration.ExpirationPlugin({
-        maxEntries: 50, // adjust as needed
-      }),
-    ],
-  })
-);
-
-// Cache images using the CacheFirst strategy
+// Cache images using the StaleWhileRevalidate strategy
 workbox.routing.registerRoute(
   /\.(png|jpg|jpeg|gif)$/,
-  new workbox.strategies.CacheFirst({
+  new workbox.strategies.StaleWhileRevalidate({
     cacheName: `${CACHE_PREFIX}-images`,
     plugins: [
       new workbox.expiration.ExpirationPlugin({
-        maxEntries: 50, // adjust as needed
+        maxEntries: 50, // Adjust as needed
         maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
       }),
     ],
   })
 );
 
-// Cache icons based on their unique URLs with CacheFirst strategy
+// Cache icons based on their unique URLs with StaleWhileRevalidate strategy
 workbox.routing.registerRoute(
   ({ url }) => url.pathname.startsWith("https://icon.horse/icon/"),
-  new workbox.strategies.CacheFirst({
+  new workbox.strategies.StaleWhileRevalidate({
     cacheName: ICON_CACHE_NAME,
     plugins: [
       new workbox.expiration.ExpirationPlugin({
-        maxEntries: 50, // adjust as needed
+        maxEntries: 50, // Adjust as needed
         maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
       }),
     ],
@@ -123,27 +72,39 @@ workbox.routing.registerRoute(
 );
 
 // Background sync to update the cache for dynamic content
-const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('bgSyncQueue', {
-  maxRetentionTime: 24 * 60, // Retry for up to 24 hours
-});
-
-workbox.routing.registerRoute(
-  /\.html$/,
-  new workbox.strategies.StaleWhileRevalidate({
-    cacheName: CACHE_NAME_DYNAMIC,
-    plugins: [bgSyncPlugin],
-  }),
-  "POST"
+const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin(
+  "bgSyncQueue",
+  {
+    maxRetentionTime: 24 * 60, // Retry for up to 24 hours
+  }
 );
 
-// Cache navigation requests using NetworkFirst strategy
+// Cache dynamic content (HTML, JS) with StaleWhileRevalidate strategy and background sync
+workbox.routing.registerRoute(
+  /\.(html|js)$/,
+  new workbox.strategies.StaleWhileRevalidate({
+    cacheName: CACHE_NAME_DYNAMIC,
+    plugins: [
+      new workbox.cacheableResponse.CacheableResponsePlugin({
+        statuses: [200],
+        headers: { "Cache-Control": "public, max-age=600" }, // Cache for 10 minutes
+      }),
+      new workbox.expiration.ExpirationPlugin({
+        maxEntries: 50, // Adjust as needed
+      }),
+      bgSyncPlugin,
+    ],
+  })
+);
+
+// Cache navigation requests using StaleWhileRevalidate strategy
 workbox.routing.registerRoute(
   ({ event }) => event.request.mode === "navigate",
-  new workbox.strategies.NetworkFirst({
+  new workbox.strategies.StaleWhileRevalidate({
     cacheName: CACHE_NAME_STATIC,
     plugins: [
       new workbox.expiration.ExpirationPlugin({
-        maxEntries: 50, // adjust as needed
+        maxEntries: 50, // Adjust as needed
       }),
     ],
   })
@@ -155,29 +116,39 @@ workbox.routing.setDefaultHandler(
     cacheName: CACHE_NAME_STATIC,
     plugins: [
       new workbox.expiration.ExpirationPlugin({
-        maxEntries: 50, // adjust as needed
+        maxEntries: 50, // Adjust as needed
         maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
       }),
     ],
   })
 );
 
-// Activate event to clean up old caches
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (
-            cacheName.startsWith(CACHE_PREFIX) &&
-            cacheName !== CACHE_NAME_STATIC &&
-            cacheName !== CACHE_NAME_DYNAMIC &&
-            cacheName !== ICON_CACHE_NAME
-          ) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
+// Periodic Notifications every 1 minute
+const showPeriodicNotification = async () => {
+  const title = "WebCore Backup Reminder";
+  const options = {
+    body: "Click here to backup your nostr data",
+    icon: "/assets/icons/icon.png", // Replace with the correct path
+  };
+
+  // Use Workbox background sync to ensure reliability
+  await bgSyncPlugin._saveNotification({ title, options });
+
+  // Display the notification
+  self.registration.showNotification(title, options);
+};
+
+// Schedule periodic notifications
+const scheduleNotifications = () => {
+  setInterval(showPeriodicNotification, 60 * 1000); // Every 1 minute
+};
+
+// Handle notification click to open /list.html
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  // Open /list.html when notification is clicked
+  const openListPage = clients.openWindow("/assets/pages/backup/backup.html");
+
+  event.waitUntil(openListPage);
 });

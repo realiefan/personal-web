@@ -126,12 +126,29 @@
         <button class="delete" id="toggleDeleteButton" onclick="yourDeleteFunction()">
             <i data-lucide="trash-2" class="menu-icon"></i>
         </button>
-        <button class="fileSync" id="downloadDataButton" onclick="">
-            <i data-lucide="folder-sync" class="menu-icon"></i>
-        </button>
+        
+      
     </div>
 
     </div>
+
+    <div class="card">
+        <div class="SubHeading">
+            <a>Setup Auto-Backup (soon)</a>
+        </div>
+        <section id="linksContainer">
+            <!-- Links will be dynamically added here -->
+        </section>
+        <div class="button-container">
+            
+    
+            <button class="fileSync" id="requestNotificationBtn" onclick="requestNotificationPermission()">
+                <i data-lucide="bell-plus" class="menu-icon"></i>
+            </button>
+        </div>
+    
+    </div>
+   
 
 
     <div class="home-container">
@@ -139,7 +156,7 @@
             <i data-lucide="arrow-left-circle" class="menu-icon"></i>
         </button>
     </div>
-    
+
 
     <dialog id="linkAddingDialog" class="linkAddingDialog">
         <div class="modal-subheading">You can add your custom web apps here, and 
@@ -173,20 +190,7 @@
 
     <script src="/assets/pages/control/anaylatic.js"></script>
     
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const linkDetails = document.getElementById("linkDetails");
-            const toggleButton = document.getElementById("toggleButton");
-
-            toggleButton.addEventListener("click", function () {
-                if (linkDetails.style.display === "none") {
-                    linkDetails.style.display = "block";
-                } else {
-                    linkDetails.style.display = "none";
-                }
-            });
-        });
-    </script>
+   
 
  
 
@@ -198,7 +202,30 @@
 <script  src="/assets/pages/control/control.js"></script>
         
     </script>
+
     
+  <script>
+    function requestNotificationPermission() {
+        // Check if the browser supports notifications
+        if (!("Notification" in window)) {
+            alert("This browser does not support desktop notifications.");
+        } else {
+            // Check if the user has granted permission
+            if (Notification.permission === "granted") {
+                // If permission is already granted, show a notification
+                new Notification("Notification permission already granted");
+            } else if (Notification.permission !== "denied") {
+                // If permission is not denied, request permission
+                Notification.requestPermission().then(function (permission) {
+                    if (permission === "granted") {
+                        // If the user grants permission, show a notification
+                        new Notification("Notification permission granted");
+                    }
+                });
+            }
+        }
+    }
+</script>
     
     
     <script>
