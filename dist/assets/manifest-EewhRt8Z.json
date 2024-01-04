@@ -1,0 +1,25 @@
+{
+  "name": "WebCore",
+  "short_name": "WebCore",
+  "description": "WebCore: Web portal by NostrNet",
+  "version": "1.0.0",
+  "start_url": "/",
+  "display": "standalone",
+  "display_override": ["tabbed"],  
+  "background_color": "#202124",
+  "theme_color": "#202124",
+  "icons": [
+    {
+      "src": "/src/assets/icons/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/src/assets/icons/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "scope": "/",
+  "prefer_related_applications": true
+}
