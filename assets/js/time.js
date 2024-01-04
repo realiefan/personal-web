@@ -19,15 +19,35 @@ async function loadTopLinks() {
     // Take the top 5 links
     const top5Links = sortedLinks.slice(0, 5);
 
-    // Dynamically load the links or perform any other desired action
+    // Attach click event listeners to the links
     top5Links.forEach(link => {
-      // Example: Open links in a new tab
-      console.log(`Loading link: ${link}`);
-      window.open(link, '_blank');
+      const linkElement = document.getElementById(link); // Adjust this based on your HTML structure
+      if (linkElement) {
+        linkElement.addEventListener('click', () => handleLinkClick(link));
+      }
     });
   } catch (error) {
     console.error(error.message);
   }
+}
+
+function preloadLink(link) {
+  // Create a link element with 'prefetch' attribute and append it to the head
+  const prefetchLink = document.createElement('link');
+  prefetchLink.href = link;
+  prefetchLink.rel = 'prefetch';
+  document.head.appendChild(prefetchLink);
+}
+
+function handleLinkClick(link) {
+  // Perform any desired action before loading the link, if needed
+  console.log(`User clicked on link: ${link}`);
+  
+  // Preload the link
+  preloadLink(link);
+
+  // Now, you can navigate to the link or perform additional actions as needed
+  // Example: window.location.href = link;
 }
 
 // Call the asynchronous function when needed
