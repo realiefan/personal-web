@@ -85,7 +85,13 @@ const scheduleNotifications = () => {
   // Check notification permission
   Notification.requestPermission().then(permission => {
     if (permission === 'granted') {
-      // Permission granted, set up the interval
+      // Permission granted, show initial notification
+      self.registration.showNotification("Permission Granted", {
+        body: "You've granted notification permission.",
+        tag: "notification-permission-granted",
+      });
+
+      // Set up the interval for periodic notifications
       setInterval(() => {
         showPeriodicNotification();
       }, 60 * 1000); // Every 1 minute
@@ -98,6 +104,11 @@ const scheduleNotifications = () => {
     console.error('Error requesting notification permission:', error);
   });
 };
+
+// Call scheduleNotifications when the service worker is installed
+self.addEventListener("install", (event) => {
+  event.waitUntil(scheduleNotifications());
+});
 
 // Handle notification click to open /list.html or perform backup action
 self.addEventListener("notificationclick", (event) => {
@@ -113,24 +124,4 @@ self.addEventListener("notificationclick", (event) => {
     // Open the specified URL on notification click
     event.waitUntil(clients.openWindow(openUrl));
   }
-});
-
-// Request notification permission when the service worker is installed
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    Notification.requestPermission().then(permission => {
-      if (permission === 'granted') {
-        // Show initial notification or perform other actions
-        self.registration.showNotification("Permission Granted", {
-          body: "You've granted notification permission.",
-          tag: "notification-permission-granted",
-        });
-      }
-    })
-  );
-});
-
-// Call scheduleNotifications when the service worker is activated
-self.addEventListener("activate", (event) => {
-  scheduleNotifications();
 });
