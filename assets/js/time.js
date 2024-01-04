@@ -8,6 +8,7 @@ async function loadTopLinks() {
       } else {
         reject(new Error('No link usage data found in local storage.'));
       }
+      console.log(`User clicked on link: ${link}`);
     });
 
     // Extract links as keys from the linkUsageData object
@@ -37,6 +38,7 @@ function preloadLink(link) {
   prefetchLink.href = link;
   prefetchLink.rel = 'prefetch';
   document.head.appendChild(prefetchLink);
+  console.log(`User clicked on link: ${link}`);
 }
 
 function handleLinkClick(link) {

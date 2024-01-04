@@ -49,8 +49,16 @@ workbox.routing.registerRoute(({ event }) => event.request.mode === "navigate", 
 // Cache everything else with NetworkFirst strategy
 workbox.routing.setDefaultHandler(new workbox.strategies.NetworkFirst(cacheSettings));
 
+
+
+
+// Function to show a notification
+const showNotification = (title, options) => {
+  return self.registration.showNotification(title, options);
+};
+
 // Periodic Notifications every 1 minute
-const showPeriodicNotification = async () => {
+const showPeriodicNotification = () => {
   const title = "WebCore Backup Reminder";
   const options = {
     body: "Don't forget to back up your Nostr data regularly for a seamless experience.",
@@ -68,14 +76,27 @@ const showPeriodicNotification = async () => {
     ],
   };
 
-  await workbox.backgroundSync.broadcastNotification({ title, options });
-
-  self.registration.showNotification(title, options);
+  // Show the notification
+  return showNotification(title, options);
 };
 
-// Schedule periodic notifications
+// Schedule periodic notifications based on permission status
 const scheduleNotifications = () => {
-  setInterval(showPeriodicNotification, 60 * 1000); // Every 1 minute
+  // Check notification permission
+  Notification.requestPermission().then(permission => {
+    if (permission === 'granted') {
+      // Permission granted, set up the interval
+      setInterval(() => {
+        showPeriodicNotification();
+      }, 60 * 1000); // Every 1 minute
+    } else {
+      // Handle case where permission is denied
+      console.log('Notification permission denied');
+    }
+  }).catch(error => {
+    // Handle errors during permission request
+    console.error('Error requesting notification permission:', error);
+  });
 };
 
 // Handle notification click to open /list.html or perform backup action
@@ -92,4 +113,24 @@ self.addEventListener("notificationclick", (event) => {
     // Open the specified URL on notification click
     event.waitUntil(clients.openWindow(openUrl));
   }
+});
+
+// Request notification permission when the service worker is installed
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        // Show initial notification or perform other actions
+        self.registration.showNotification("Permission Granted", {
+          body: "You've granted notification permission.",
+          tag: "notification-permission-granted",
+        });
+      }
+    })
+  );
+});
+
+// Call scheduleNotifications when the service worker is activated
+self.addEventListener("activate", (event) => {
+  scheduleNotifications();
 });
