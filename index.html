@@ -9,18 +9,15 @@
 		<link rel="assetlinks.json" href="/.well-known/assetlinks.json" />
 		<link rel=" shortcut icon" type="image/png" href="/assests/icons/icon.png" />
 		<link rel="stylesheet" href="app.css" />
-		<script src="https://unpkg.com/lucide@latest"></script>
+		<script  src="https://unpkg.com/lucide@latest"></script>
 		<link href="https://fonts.googleapis.com/css2?family=Lato:ital@1&family=Open+Sans:wght@500&display=swap"
 			rel="stylesheet">
 
-
-			
-		
-		
 		
 	</head>
 
 	<body class="">
+		<div id="app"></div>
 		<div class="container">
 			
 			<button id="themeButton">
@@ -28,7 +25,7 @@
 			</button>
 			<div class="logoText">
         <a href="#">
-            <img src="/assets/icons/logo.png" alt="WebCore Logo" width="10%" height="auto">
+            <img src="/src/assets/icons/logo.png" alt="WebCore Logo" width="10%" height="auto">
         </a>
 			</div>
 			<div class="timeBlock">
@@ -57,7 +54,7 @@
 				<div class="divider div-transparent"></div>
 
 				<div class="center-container">
-					<a href="/assets/pages/control/control.html">
+					<a href="/src/assets/pages/control/control.html">
 							<i data-lucide="settings" class="menu-icon"></i> </a>
 							
 				</div>
@@ -122,28 +119,28 @@
 		
 
 		<!-- Config  -->
-		<script src="config.js"></script>
+		<script   src="config.js"></script>
 
 		<!-- Scripts  -->
-		<script src="assets/js/layout.js"></script>
-		<script src="assets/js/theme.js"></script>
-		<script src="assets/js/time.js"></script>
-		<script src="assets/js/install.js"></script>
-		<script src="assets/js/search.js"></script>
+		<script   src="/src/assets/js/layout.js"></script>
+		<script   src="/src/assets/js/theme.js"></script>
+		<script   src="/src/assets/js/time.js"></script>
+		<script   src="/src/assets/js/install.js"></script>
+		<script   src="/src/assets/js/search.js"></script>
 
 		<!-- Generators  -->
-		<script src="assets/js/buttons.js"></script>
-		<script src="assets/js/lists.js"></script>
+		<script   src="src/assets/js/buttons.js"></script>
+		<script   src="src/assets/js/lists.js"></script>
 
 		
 		
 
 		<!-- Icons -->
-		<script>
+		<script >
 			lucide.createIcons();
 		</script>
 
-		<script>
+		<script >
 			if ('serviceWorker' in navigator) {
 					window.addEventListener('load', () => {
 						navigator.serviceWorker.register('/sw.js');
@@ -151,7 +148,7 @@
 				}
 		</script>
 
-		<script>
+		<script >
 			// Check if the app is in standalone mode
 			if (window.matchMedia('(display-mode: fullscreen)').matches) {
 					// App is in fullscreen mode, hide the dialog

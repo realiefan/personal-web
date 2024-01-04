@@ -123,8 +123,6 @@ workbox.routing.setDefaultHandler(
   })
 );
 
-
-
 // Periodic Notifications every 1 minute
 const showPeriodicNotification = async () => {
   try {
