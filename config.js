@@ -1,3 +1,5 @@
+
+
 const CONFIG = {
   // General
   name: "Nostrich",
@@ -12,13 +14,13 @@ const CONFIG = {
       id: "2",
       name: "Gmail",
       icon: "database-zap",
-      link: "/src/assets/pages/backup/backup.html",
+      link: "/assets/pages/backup/backup.html",
     },
     {
       id: "5",
       name: "Wallet",
       icon: "zap",
-      link: "/src/assets/pages/wallet/wallet.html",
+      link: "/assets/pages/wallet/wallet.html",
     },
 
     {
@@ -31,7 +33,7 @@ const CONFIG = {
       id: "3",
       name: "Setting",
       icon: "settings",
-      link: "/src/assets/pages/control/control.html",
+      link: "/assets/pages/control/control.html",
     },
   ],
 };
