@@ -3,7 +3,7 @@ importScripts(
 );
 
 const CACHE_PREFIX = "NostrNet";
-const CACHE_VERSION = "V8.2";
+const CACHE_VERSION = "V8";
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
 const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
@@ -86,10 +86,10 @@ workbox.routing.setDefaultHandler(
 self.addEventListener("install", (event) => {
   console.log("Service Worker Installed");
 
-  // Register service worker
+  // Register service worker and claim clients
   event.waitUntil(
-    self.skipWaiting().then(() => {
-      return self.clients.claim();
+    self.clients.claim().then(() => {
+      return self.skipWaiting();
     })
   );
 
@@ -115,6 +115,9 @@ self.addEventListener("install", (event) => {
     );
   }
 });
+
+// ... (Your existing code)
+
 
 
 self.addEventListener("notificationclick", (event) => {
