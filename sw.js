@@ -1,6 +1,4 @@
-importScripts(
-  "https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js"
-);
+importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
 
 // Constants
 const CACHE_PREFIX = "NostrNet";
@@ -8,6 +6,8 @@ const CACHE_VERSION = "V8";
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
 const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
+const CACHE_NAME_PAGES = `${CACHE_PREFIX}-pages-${CACHE_VERSION}`;
+const CACHE_NAME_BACKUP = `${CACHE_PREFIX}-backup-${CACHE_VERSION}`;
 
 const cacheSettings = {
   cacheName: CACHE_NAME_STATIC,
@@ -33,7 +33,9 @@ self.addEventListener("activate", (event) => {
               key.startsWith(CACHE_PREFIX) &&
               key !== CACHE_NAME_STATIC &&
               key !== CACHE_NAME_DYNAMIC &&
-              key !== ICON_CACHE_NAME
+              key !== ICON_CACHE_NAME &&
+              key !== CACHE_NAME_PAGES &&
+              key !== CACHE_NAME_BACKUP
           )
           .map((key) => caches.delete(key))
       );
@@ -54,6 +56,7 @@ workbox.routing.registerRoute(
   /\.(png|jpg|jpeg|gif)$/,
   new workbox.strategies.StaleWhileRevalidate(cacheSettings)
 );
+
 workbox.routing.registerRoute(
   ({ url }) => url.pathname.startsWith("https://icon.horse/icon/"),
   new workbox.strategies.CacheFirst({
@@ -67,30 +70,67 @@ workbox.routing.registerRoute(
   })
 );
 
+// Separate cache for HTML pages
 workbox.routing.registerRoute(
-  /\.(html|js)$/,
+  ({ request }) => request.destination === 'document',
   new workbox.strategies.StaleWhileRevalidate({
-    cacheName: CACHE_NAME_DYNAMIC,
+    cacheName: CACHE_NAME_PAGES,
     plugins: [
-      ...cacheSettings.plugins,
-      new workbox.backgroundSync.BackgroundSyncPlugin("bgSyncQueue", {
+      new workbox.expiration.ExpirationPlugin({
+        maxEntries: 20,
+        maxAgeSeconds: 24 * 60 * 60, // 1 day
+      }),
+    ],
+  })
+);
+
+// Cache assets for the "backup" page
+workbox.routing.registerRoute(
+  ({ url }) => url.pathname.startsWith("/assets/pages/backup/"),
+  new workbox.strategies.StaleWhileRevalidate({
+    cacheName: CACHE_NAME_BACKUP,
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxEntries: 20,
+        maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
+      }),
+    ],
+  })
+);
+
+// Dynamic routing for API calls
+workbox.routing.registerRoute(
+  new RegExp('/api/'),
+  new workbox.strategies.NetworkFirst({
+    cacheName: 'api-cache',
+  })
+);
+
+// Background sync for HTML pages
+workbox.routing.registerRoute(
+  ({ request }) => request.destination === 'document',
+  new workbox.strategies.StaleWhileRevalidate({
+    cacheName: CACHE_NAME_PAGES,
+    plugins: [
+      new workbox.backgroundSync.BackgroundSyncPlugin('bgSyncQueue', {
         maxRetentionTime: 24 * 60, // Retry for up to 24 hours
       }),
     ],
   })
 );
 
-workbox.routing.registerRoute(
-  ({ event }) => event.request.mode === "navigate",
-  new workbox.strategies.StaleWhileRevalidate(cacheSettings)
-);
-
+// Default handler
 workbox.routing.setDefaultHandler(
-  new workbox.strategies.NetworkFirst(cacheSettings)
-
+  new workbox.strategies.NetworkFirst({
+    cacheName: CACHE_NAME_PAGES, // Use the HTML pages cache
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxEntries: 20,
+        maxAgeSeconds: 24 * 60 * 60, // 1 day
+      }),
+    ],
+  })
 );
-
-
 
 // Check notification permission and schedule notifications on install
 self.addEventListener("install", (event) => {
