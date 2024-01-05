@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
 
-  <script src="https://unpkg.com/idb@4.0.3/build/iife/index-min.js"></script>
+  <script type="module"    src="https://unpkg.com/idb@4.0.3/build/iife/index-min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Primary Meta Tags -->
   <title>NostrSync</title>
@@ -84,7 +84,7 @@
 
 
 
-                <script>
+                <script type="module"   >
                   var fileName = ""
 
                   const fileSelector = document.getElementById('file-selector');
@@ -107,7 +107,7 @@
             display: none;
           }
         </style>
-        <script>
+        <script type="module"   >
           function toggleFileInput() {
               var fileInput = document.getElementById('file-selector');
               var backupAndBroadcastBtn = document.getElementById('fetch-and-broadcast');
@@ -180,7 +180,7 @@
     </div>
 
     <div class="home-container">
-      <button id="homeButton" onclick="openLink()">
+      <button id="homeButton" >
         <i data-lucide="arrow-left-circle" class="menu-icon"></i>
       </button>
     </div>
@@ -190,19 +190,18 @@
 
   </main>
 
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://bundle.run/buffer@6.0.3"></script>
-  <script src="https://bundle.run/bech32@2.0.0"></script>
-  <script src="https://nostr-utils.pages.dev/js/jquery-3.6.2.min.js"></script>
-  <script src="js/nostr-utils.js"></script>
-  <script src="js/relays.js"></script>
-  <script src="js/nostr-broadcast.js"></script>
+  <script type="module"    src="https://unpkg.com/lucide@latest"></script>
+  <script type="module"    src="https://bundle.run/buffer@6.0.3"></script>
+  <script type="module"    src="https://bundle.run/bech32@2.0.0"></script>
+  <script type="module"    src="https://nostr-utils.pages.dev/js/jquery-3.6.2.min.js"></script>
+  <script type="module"    src="js/nostr-utils.js"></script>
+  <script type="module"    src="js/relays.js"></script>
+  <script type="module"    src="js/nostr-broadcast.js"></script>
 
-  <script>
-    function openLink() {
-        // Replace 'your-link-url' with the actual URL you want to open
-        window.location.href = "/";
-      }
+  <script type="module"   >
+    document.getElementById("homeButton").addEventListener("click", () => {
+        window.location.href = "/index.html";
+      });
 
       lucide.createIcons();
 

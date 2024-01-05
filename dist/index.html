@@ -5,27 +5,28 @@
 		<title>WebCore</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="apple-mobile-web-app-capable" content="yes">
-		<link rel="manifest" href="/assets/manifest-EewhRt8Z.json" />
-		<link rel="assetlinks.json" href="data:application/json;base64,W3sKICAgICAgInJlbGF0aW9uIjogWyJkZWxlZ2F0ZV9wZXJtaXNzaW9uL2NvbW1vbi5oYW5kbGVfYWxsX3VybHMiXSwKICAgICAgInRhcmdldCI6IHsKICAgICAgICAibmFtZXNwYWNlIjogImFuZHJvaWRfYXBwIiwKICAgICAgICAicGFja2FnZV9uYW1lIjogImxpdmUud2ViY29yZS50d2EiLAogICAgICAgICJzaGEyNTZfY2VydF9maW5nZXJwcmludHMiOiBbIkM0OjAyOkY3OkY5OjkwOjQyOjREOkRCOjdBOkI2OjZCOjJFOjQxOkNFOkVFOkYyOjREOjg3Ojk0OjUzOjhCOkVCOkVFOkE4OjVDOjM1OkE3OjMxOjJDOjdCOkE2OjZBIl0KICAgICAgfQogICAgfV0K" />
+		<link rel="manifest" href="/assets/manifest-KsiFDbGW.json" />
+		<link rel="assetlinks.json" href="/.well-known/assetlinks.json" />
 		<link rel=" shortcut icon" type="image/png" href="/assests/icons/icon.png" />
-		<script  src="https://unpkg.com/lucide@latest"></script>
+		<script type="module"    src="https://unpkg.com/lucide@latest"></script>
 		<link href="https://fonts.googleapis.com/css2?family=Lato:ital@1&family=Open+Sans:wght@500&display=swap"
 			rel="stylesheet">
 
 		
-		<link rel="stylesheet" crossorigin href="/assets/index-fJ1pJHAs.css">
+		<script type="module" crossorigin src="/assets/home-BMC5ysBI.js"></script>
+		<link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-9p4a8sJU.js">
+		<link rel="stylesheet" crossorigin href="/assets/home-QFdlB7-n.css">
 	</head>
 
 	<body class="">
-		<div id="app"></div>
 		<div class="container">
 			
 			<button id="themeButton">
-				<i id="themeIcon" icon-name="bot"></i>
+				<i id="themeIcon" data-lucide="bot"></i>
 			</button>
 			<div class="logoText">
         <a href="#">
-            <img src="/assets/logo-s7QjGvDQ.png" alt="WebCore Logo" width="10%" height="auto">
+            <img src="/assets/logo-s7QjGvDQ.png" alt="WebCore Logo" width="40" height="auto">
         </a>
 			</div>
 			<div class="timeBlock">
@@ -54,7 +55,7 @@
 				<div class="divider div-transparent"></div>
 
 				<div class="center-container">
-					<a href="/src/assets/pages/control/control.html">
+					<a href="/assets/pages/control/control.html">
 							<i data-lucide="settings" class="menu-icon"></i> </a>
 							
 				</div>
@@ -119,50 +120,17 @@
 		
 
 		<!-- Config  -->
-		<script   src="config.js"></script>
 
 		<!-- Scripts  -->
-		<script   src="/src/assets/js/layout.js"></script>
-		<script   src="/src/assets/js/theme.js"></script>
-		<script   src="/src/assets/js/time.js"></script>
-		<script   src="/src/assets/js/install.js"></script>
-		<script   src="/src/assets/js/search.js"></script>
 
 		<!-- Generators  -->
-		<script   src="src/assets/js/buttons.js"></script>
-		<script   src="src/assets/js/lists.js"></script>
 
 		
 		
 
 		<!-- Icons -->
-		<script >
-			lucide.createIcons();
-		</script>
 
-		<script >
-			if ('serviceWorker' in navigator) {
-					window.addEventListener('load', () => {
-						navigator.serviceWorker.register('/sw.js');
-					});
-				}
-		</script>
 
-		<script >
-			// Check if the app is in standalone mode
-			if (window.matchMedia('(display-mode: fullscreen)').matches) {
-					// App is in fullscreen mode, hide the dialog
-					document.getElementById('dialog').style.display = 'none';
-				} else if (window.matchMedia('(display-mode: standalone)').matches) {
-					// App is in standalone mode, hide the dialog
-					document.getElementById('dialog').style.display = 'none';
-				} else {
-					// App is not in fullscreen or standalone mode, show the dialog
-					document.getElementById('dialog').style.display = 'none';
-					document.getElementById('overlay').style.display = 'none';
-				}
-
-		</script>
 		
 	</body>
 	

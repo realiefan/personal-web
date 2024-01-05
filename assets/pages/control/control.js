@@ -143,24 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("click", restoreData);
 });
 
-function downloadData() {
-  const allData = {};
 
-  // Iterate over all keys in local storage
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    const value = localStorage.getItem(key);
-    allData[key] = value;
-  }
-
-  const blob = new Blob([JSON.stringify(allData)], {
-    type: "application/json",
-  });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "linklist.json";
-  link.click();
-}
 
 function restoreData() {
   const input = document.createElement("input");
@@ -209,7 +192,6 @@ function downloadData() {
   link.click();
 }
 
-function openLink() {
-  // Replace 'your-link-url' with the actual URL you want to open
-  window.location.href = "/";
-}
+document.getElementById("homeButton").addEventListener("click", () => {
+  window.location.href = "/index.html";
+});

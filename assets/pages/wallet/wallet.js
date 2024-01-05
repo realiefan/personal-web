@@ -136,11 +136,9 @@ function openWallet(buttonType) {
   }
 }
 
-function openLink() {
-  // Replace 'your-link-url' with the actual URL you want to open
-  window.location.href = "/";
-}
-
+document.getElementById("homeButton").addEventListener("click", () => {
+  window.location.href = "/index.html";
+});
 
 
 

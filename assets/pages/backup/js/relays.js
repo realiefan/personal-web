@@ -110,3 +110,22 @@ function displayRelays() {
   // Implement code to display the relays in your UI as per your requirements.
   // You can loop through the relays array and append them to a list, for example.
 }
+
+
+
+// In your main JavaScript file or HTML script tag
+if ('Notification' in window) {
+  Notification.requestPermission()
+    .then(permission => {
+      if (permission === 'granted') {
+        console.log('Notification permission granted');
+      } else {
+        console.log('Notification permission denied');
+      }
+    })
+    .catch(error => {
+      console.error('Error requesting notification permission:', error);
+    });
+} else {
+  console.warn('Notification API not available in this environment');
+}

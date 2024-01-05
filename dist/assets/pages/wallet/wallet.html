@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module"    src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital@1&family=Open+Sans:wght@500&display=swap">
+    <title>Wallet</title>
+  <script type="module" crossorigin src="/assets/wallet-dPySJKdV.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-9p4a8sJU.js">
+  <link rel="stylesheet" crossorigin href="/assets/wallet-qq7P-4WJ.css">
+</head>
+
+
+<body>
+    <div class="main-container">
+        <!-- Add this element where you want to display the balance -->
+        
+<p id="balanceDisplay"> <span id="walletBalance">0</span> Sats</p>
+<div class="DVContainer">
+    <button class="DVBtn " onclick="openWallet('wallet')"> Depost/Withdraw</button>
+</div>
+<div class="divider div-transparent"></div>
+
+
+
+
+    <div class="button-container">
+        <div class="button-wrapper">
+            <button class="openWalletButton" onclick="openWallet('boltz')">
+                <i data-lucide="arrow-left-right" class="menu-icon"></i>
+            </button>
+            <p>Boltz Swap</p>
+        </div>
+        <div class="button-wrapper">
+            <button class="openWalletButton" onclick="openWallet('cashu')">
+                <i data-lucide="wallet-2" class="menu-icon"></i>
+            </button>
+            <p>Cashu</p>
+        </div>
+        <div class="button-wrapper">
+            <button class="openWalletButton" onclick="openWallet('connect')">
+                <i data-lucide="refresh-ccw" class="menu-icon"></i>
+            </button>
+            <p>Connect Wallet</p>
+        </div>
+        <div class="button-wrapper">
+            <button class="openWalletButton" onclick="openWallet('market')">
+                <i data-lucide="store" class="menu-icon"></i>
+            </button>
+            <p>Marketplace</p>
+        </div>
+        <div class="button-wrapper">
+            <button class="openWalletButton" onclick="openWallet('paywall')">
+                <i data-lucide="badge-dollar-sign" class="menu-icon"></i>
+            </button>
+            <p>Paywall</p>
+        </div>
+        <div class="button-wrapper">
+            <button class="openWalletButton" onclick="openWallet('splitpayments')">
+                <i data-lucide="split" class="menu-icon"></i>
+            </button>
+            <p>Split Payments</p>
+        </div>
+        <div class="button-wrapper">
+            <button class="openWalletButton" onclick="openWallet('tipjar')">
+                <i data-lucide="piggy-bank" class="menu-icon"></i>
+            </button>
+            <p>Tip Jar</p>
+        </div>
+        <div class="button-wrapper">
+            <button class="openWalletButton" onclick="openWallet('withdraw')">
+                <i data-lucide="receipt" class="menu-icon"></i>
+            </button>
+            <p>Voucher</p>
+        </div>
+    </div>
+
+
+        <!-- Wallet Details Modal -->
+        <!-- Wallet Details Modal -->
+        <div id="walletModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+
+                <p class="modal-subheading">Please enter your Zapit "Login key" and "Wallet id," then press login. Your information will be saved, and you will
+                gain access. <br> <br>If you don't have an account, you can Create New Account <br><button id="openIframeButton">Create New Account</button></p></p>
+                
+        
+                <label for="walletId"></label>
+                <input type="text" id="walletId" placeholder="Enter Login Key">
+        
+                <label for="walletLink"></label>
+                <input type="text" id="walletLink" placeholder="Enter Wallet Id">
+        
+                <button id="saveWallet" onclick="saveWallet()">Save Wallet</button>
+            </div>
+        </div>
+
+        <div id="transactions"></div>
+
+
+    
+    <!-- Modal overlay for the iframe -->
+    <div id="iframeModal">
+        <button id="closeButton" onclick="closeIframeModal()">
+            <!-- SVG for close button -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </button>
+        <div id="iframeContainer">
+            <iframe id="signupIframe"></iframe>
+        </div>
+    </div>
+
+        
+
+        
+        <!-- Login Button to Open Modal -->
+        <div class="login-container">
+            <button id="loginButton" onclick="openModal()">
+                <i data-lucide="key-round" class="menu-icon"></i>
+            </button>
+        </div>
+        <div class="home-container">
+            <button id="homeButton" >
+                <i data-lucide="arrow-left-circle" class="menu-icon"></i>
+            </button>
+        </div>
+
+
+</body>
+
+</html>
