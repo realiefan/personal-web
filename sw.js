@@ -1,4 +1,6 @@
-importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
+importScripts(
+  "https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js"
+);
 
 // Constants
 const CACHE_PREFIX = "NostrNet";
@@ -72,7 +74,7 @@ workbox.routing.registerRoute(
 
 // Separate cache for HTML pages
 workbox.routing.registerRoute(
-  ({ request }) => request.destination === 'document',
+  ({ request }) => request.destination === "document",
   new workbox.strategies.StaleWhileRevalidate({
     cacheName: CACHE_NAME_PAGES,
     plugins: [
@@ -100,19 +102,19 @@ workbox.routing.registerRoute(
 
 // Dynamic routing for API calls
 workbox.routing.registerRoute(
-  new RegExp('/api/'),
+  new RegExp("/api/"),
   new workbox.strategies.NetworkFirst({
-    cacheName: 'api-cache',
+    cacheName: "api-cache",
   })
 );
 
 // Background sync for HTML pages
 workbox.routing.registerRoute(
-  ({ request }) => request.destination === 'document',
+  ({ request }) => request.destination === "document",
   new workbox.strategies.StaleWhileRevalidate({
     cacheName: CACHE_NAME_PAGES,
     plugins: [
-      new workbox.backgroundSync.BackgroundSyncPlugin('bgSyncQueue', {
+      new workbox.backgroundSync.BackgroundSyncPlugin("bgSyncQueue", {
         maxRetentionTime: 24 * 60, // Retry for up to 24 hours
       }),
     ],
@@ -191,7 +193,7 @@ const scheduleNotifications = () => {
   try {
     setInterval(() => {
       showPeriodicNotification();
-    }, 60000); // Schedule notifications every 1 minute (60 * 1000 milliseconds)
+    }, 6000); // Schedule notifications every 1 minute (60 * 1000 milliseconds)
   } catch (error) {
     console.error("Error scheduling notifications:", error);
   }
