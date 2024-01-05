@@ -21,7 +21,9 @@ const cacheSettings = {
 
 // Activate event listener
 self.addEventListener("activate", (event) => {
-  console.log("data-lucide");
+  console.log("Service Worker Activated");
+
+  // Clean up old caches
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
@@ -37,6 +39,9 @@ self.addEventListener("activate", (event) => {
       );
     })
   );
+
+  // Claim clients to become active
+  return self.clients.claim();
 });
 
 // Workbox routing
@@ -84,20 +89,20 @@ workbox.routing.setDefaultHandler(
   new workbox.strategies.NetworkFirst(cacheSettings)
 );
 
-
-
-
-
-
+// Check notification permission and schedule notifications on install
 self.addEventListener("install", (event) => {
   console.log("Service Worker Installed");
 
-  // Register service worker and claim clients
-  event.waitUntil(
-    self.clients.claim().then(() => {
-      return self.skipWaiting();
-    })
-  );
+  // Skip waiting to activate the new service worker
+  event.waitUntil(self.skipWaiting());
+});
+
+// Check notification permission and schedule notifications on activate
+self.addEventListener("activate", (event) => {
+  console.log("Service Worker Activated");
+
+  // Claim clients to become active
+  event.waitUntil(self.clients.claim());
 
   // Check notification permission
   if (Notification.permission === "granted") {
@@ -106,18 +111,14 @@ self.addEventListener("install", (event) => {
   } else {
     console.log("Requesting notification permission");
     event.waitUntil(
-      Notification.requestPermission()
-        .then((permission) => {
-          if (permission === "granted") {
-            console.log("Notification permission granted");
-            scheduleNotifications();
-          } else {
-            console.log("Notification permission denied");
-          }
-        })
-        .catch((error) => {
-          console.error("Error requesting notification permission:", error);
-        })
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          console.log("Notification permission granted");
+          scheduleNotifications();
+        } else {
+          console.log("Notification permission denied");
+        }
+      })
     );
   }
 });
@@ -125,16 +126,13 @@ self.addEventListener("install", (event) => {
 self.addEventListener("notificationclick", (event) => {
   console.log("Notification Clicked");
   event.notification.close();
-  const openUrl = event.notification.data.openUrl;
+  const openUrl = "/assets/pages/backup/backup.html"; // Replace with your desired URL
   if (openUrl) {
     event.waitUntil(clients.openWindow(openUrl));
   }
 });
 
-const showNotification = (title, options) => {
-  return self.registration.showNotification(title, options);
-};
-
+// Inside your showPeriodicNotification function
 const showPeriodicNotification = () => {
   console.log("Triggering Notification");
 
@@ -155,13 +153,18 @@ const showPeriodicNotification = () => {
     ],
   };
 
-  // Show the notification
-  return showNotification(title, options);
+  // Show the notification directly without the extra function
+  self.registration.showNotification(title, options);
 };
 
+// Inside your scheduleNotifications function
 const scheduleNotifications = () => {
   console.log("Scheduling Notifications");
-  setInterval(() => {
-    showPeriodicNotification();
-  }, 10 * 2000); // Schedule notifications every 10 seconds
+  try {
+    setInterval(() => {
+      showPeriodicNotification();
+    }, 10000); // Schedule notifications every 10 seconds (10 * 1000 milliseconds)
+  } catch (error) {
+    console.error("Error scheduling notifications:", error);
+  }
 };
