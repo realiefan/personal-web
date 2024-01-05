@@ -1,212 +1,142 @@
 <!DOCTYPE html>
-<html data-theme="dark" lang="en">
+<html lang="en">
 
 <head>
-  <meta charset="utf-8" />
-
-  <script type="module"    src="https://unpkg.com/idb@4.0.3/build/iife/index-min.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Primary Meta Tags -->
-  <title>NostrSync</title>
-  <meta name="title" content="Nostr Backup Service by NostrSync" />
-  <meta name="description" content="Fetch, backup and broadcast your Nostr events" />
-  <script type="module" src="https://unpkg.com/lucide@latest"></script>
-
-
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="nostrnet/style.css" />
-  <!-- Lightning -->
-  <meta name="lightning" content="realiefan@ln.tips" />
-  <!-- PWA -->
-  <meta name="theme-color" content="#202124" />
-
-
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NostrSync</title>
-
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="wallet.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital@1&family=Open+Sans:wght@500&display=swap">
+    <title>Wallet</title>
 </head>
 
+
 <body>
+    <div class="main-container">
+        <!-- Add this element where you want to display the balance -->
+        
+<p id="balanceDisplay"> <span id="walletBalance">0</span> Sats</p>
+<div class="DVContainer">
+    <button class="DVBtn " onclick="openWallet('wallet')"> Depost/Withdraw</button>
+</div>
+<div class="divider div-transparent"></div>
 
-  <main class="container">
-    <div class="header-space">
-      <div class="header">
-        <div class="logo-container">
 
+
+
+    <div class="button-container">
+        <div class="button-wrapper">
+            <button class="openWalletButton" onclick="openWallet('boltz')">
+                <i data-lucide="arrow-left-right" class="menu-icon"></i>
+            </button>
+            <p>Boltz Swap</p>
         </div>
-        <h1>NostrSync
-        </h1>
-      </div>
-
+        <div class="button-wrapper">
+            <button class="openWalletButton" onclick="openWallet('cashu')">
+                <i data-lucide="wallet-2" class="menu-icon"></i>
+            </button>
+            <p>Cashu</p>
+        </div>
+        <div class="button-wrapper">
+            <button class="openWalletButton" onclick="openWallet('connect')">
+                <i data-lucide="refresh-ccw" class="menu-icon"></i>
+            </button>
+            <p>Connect Wallet</p>
+        </div>
+        <div class="button-wrapper">
+            <button class="openWalletButton" onclick="openWallet('market')">
+                <i data-lucide="store" class="menu-icon"></i>
+            </button>
+            <p>Marketplace</p>
+        </div>
+        <div class="button-wrapper">
+            <button class="openWalletButton" onclick="openWallet('paywall')">
+                <i data-lucide="badge-dollar-sign" class="menu-icon"></i>
+            </button>
+            <p>Paywall</p>
+        </div>
+        <div class="button-wrapper">
+            <button class="openWalletButton" onclick="openWallet('splitpayments')">
+                <i data-lucide="split" class="menu-icon"></i>
+            </button>
+            <p>Split Payments</p>
+        </div>
+        <div class="button-wrapper">
+            <button class="openWalletButton" onclick="openWallet('tipjar')">
+                <i data-lucide="piggy-bank" class="menu-icon"></i>
+            </button>
+            <p>Tip Jar</p>
+        </div>
+        <div class="button-wrapper">
+            <button class="openWalletButton" onclick="openWallet('withdraw')">
+                <i data-lucide="receipt" class="menu-icon"></i>
+            </button>
+            <p>Voucher</p>
+        </div>
     </div>
-  <h2><b>NostrSync</b> offers an <b>Broadcast & Export Service</b> that allows you to <b>Download a
-      Copy of your Data</b> & when you use this service, all of your data will also be <b>Broadcasted to Major Relays</b>
-    on the network. <br><br>This design ensures that the data is <b> Widely Distributed</b>
-    and makes it more <b>Resistant to Censorship.</b>
-  </h2>
-    <div class="dataBase">
-
-      <div class="toggle-button">
-        <input type="checkbox" id="relayToggle">
-        <label for="relayToggle">DeepSync</label>
-      </div>
-
-      <a href="/assets/pages/backup/nostrdb/index.html" class="db-btn">LocalDatabase</a>
-      <div id="toggleFileInput" class="toggle-button" onclick="toggleFileInput()"> <label> Restore</label></div>
-
-    </div>
 
 
-    <div>
-      <form>
-        <div>
-          <form>
-            <div class="space-between">
-              <p>
-                <input type="text" id="pubkey" name="pubkey" onchange="pubkeyOnChange()"
-                  placeholder="Public key (npub or hex)" required />
-              </p>
+        <!-- Wallet Details Modal -->
+        <!-- Wallet Details Modal -->
+        <div id="walletModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+
+                <p class="modal-subheading">Please enter your Zapit "Login key" and "Wallet id," then press login. Your information will be saved, and you will
+                gain access. <br> <br>If you don't have an account, you can Create New Account <br><button id="openIframeButton">Create New Account</button></p></p>
+                
+        
+                <label for="walletId"></label>
+                <input type="text" id="walletId" placeholder="Enter Login Key">
+        
+                <label for="walletLink"></label>
+                <input type="text" id="walletLink" placeholder="Enter Wallet Id">
+        
+                <button id="saveWallet" onclick="saveWallet()">Save Wallet</button>
             </div>
-            <div class="space-between-small">
-
-            </div>
-            <div class="space-between-small">
-              <div class="space-between">
-
-                <!-- Add a button to toggle the file input -->
-                <!-- Use a div as a toggle element -->
-
-
-                <!-- Add a file input with a class to control visibility -->
-                <input type="file" class="file-selector hidden" id="file-selector">
-
-
-
-                <script type="module"   >
-                  var fileName = ""
-
-                  const fileSelector = document.getElementById('file-selector');
-                  fileSelector.addEventListener('change', (event) => {
-                    fileName = event.target.files[0];
-                    $('#fetch-and-broadcast').css('display', 'none')
-                    $('#just-broadcast').css('display', 'inline-block')
-                  });
-                </script>
-              </div>
-            </div>
-          </form>
         </div>
 
+        <div id="transactions"></div>
 
 
-        <style>
-          /* Define a CSS class to hide the file input */
-          .hidden {
-            display: none;
-          }
-        </style>
-        <script type="module"   >
-          function toggleFileInput() {
-              var fileInput = document.getElementById('file-selector');
-              var backupAndBroadcastBtn = document.getElementById('fetch-and-broadcast');
-              var justBroadcastBtn = document.getElementById('just-broadcast');
-              var getFromExtensionBtn = document.getElementById('get-from-extension');
-
-              // Toggle the visibility of the file input
-              if (fileInput.style.display === 'none' || fileInput.style.display === '') {
-                fileInput.style.display = 'block';
-                // Show buttons when the file input is visible
-                backupAndBroadcastBtn.style.display = 'block';
-                justBroadcastBtn.style.display = 'none'; // You can adjust this based on your requirement
-                getFromExtensionBtn.style.display = 'none'; // You can adjust this based on your requirement
-              } else {
-                fileInput.style.display = 'none';
-                // Hide buttons when the file input is hidden
-                backupAndBroadcastBtn.style.display = 'none';
-                justBroadcastBtn.style.display = 'none';
-                getFromExtensionBtn.style.display = 'none';
-              }
-            }
-        </script>
-
-
-
-
-
-
-
-
-        <p>
-          <button id="fetch-and-broadcast" class="broad" onclick="fetchAndBroadcast(); return false;">
-            Backup & Broadcast
-          </button>
-          <button id="just-broadcast" class="broad" onclick="justBroadcast(fileName); return false;" style="display: none">
-            Broadcast from File
-          </button>
-          <button id="get-from-extension" class="broad" onclick="getFromExtension(); return false;" style="display: none">
-            Get from extension
-          </button>
-        </p>
-    </div>
-    </form>
-    </div>
-    <div class="box">
-      <div class="box-content">
-        <p id="fetching-status"></p>
-        <p style="padding-top: 2px">
-          <progress type="range" id="fetching-progress" name="fetching-progress" min="0" max="180" value="0"
-            style="visibility: hidden" />
-        </p>
-      </div>
-      <div class="box-content" id="checking-relays-header-box">
-        <p id="checking-relays-header"></p>
-      </div>
-      <div class="box-content" id="checking-relays-box">
-        <p id="checking-relays"></p>
-      </div>
-      <div class="box-content">
-        <p id="file-download"></p>
-        <p id="events-found"></p>
-      </div>
-      <div class="box-content">
-        <p id="broadcasting-status"></p>
-        <p style="padding-top: 2px">
-          <progress type="range" id="broadcasting-progress" name="broadcasting-progress" min="0" max="180" value="0"
-            style="visibility: hidden" />
-        </p>
-      </div>
+    
+    <!-- Modal overlay for the iframe -->
+    <div id="iframeModal">
+        <button id="closeButton" onclick="closeIframeModal()">
+            <!-- SVG for close button -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </button>
+        <div id="iframeContainer">
+            <iframe id="signupIframe"></iframe>
+        </div>
     </div>
 
-    <div class="home-container">
-      <button id="homeButton" >
-        <i data-lucide="arrow-left-circle" class="menu-icon"></i>
-      </button>
-    </div>
+        
 
+        
+        <!-- Login Button to Open Modal -->
+        <div class="login-container">
+            <button id="loginButton" onclick="openModal()">
+                <i data-lucide="key-round" class="menu-icon"></i>
+            </button>
+        </div>
+        <div class="home-container">
+            <button id="homeButton" onclick="openLink()">
+                <i data-lucide="arrow-left-circle" class="menu-icon"></i>
+            </button>
+        </div>
 
+    <script src="wallet.js"></script>
 
-
-  </main>
-
-  <script type="module"    src="https://unpkg.com/lucide@latest"></script>
-  <script type="module"    src="https://bundle.run/buffer@6.0.3"></script>
-  <script type="module"    src="https://bundle.run/bech32@2.0.0"></script>
-  <script type="module"    src="https://nostr-utils.pages.dev/js/jquery-3.6.2.min.js"></script>
-  <script type="module"    src="js/nostr-utils.js"></script>
-  <script type="module"    src="js/relays.js"></script>
-  <script type="module"    src="js/nostr-broadcast.js"></script>
-
-  <script type="module"   >
-    document.getElementById("homeButton").addEventListener("click", () => {
-        window.location.href = "/index.html";
-      });
-
-      lucide.createIcons();
-
-  </script>
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 
 </html>

@@ -9,10 +9,14 @@
 		<link rel="assetlinks.json" href="/.well-known/assetlinks.json" />
 		<link rel=" shortcut icon" type="image/png" href="/assests/icons/icon.png" />
 		<link rel="stylesheet" href="app.css" />
-		<script type="module"    src="https://unpkg.com/lucide@latest"></script>
+		<script src="https://unpkg.com/lucide@latest"></script>
 		<link href="https://fonts.googleapis.com/css2?family=Lato:ital@1&family=Open+Sans:wght@500&display=swap"
 			rel="stylesheet">
 
+
+			
+		
+		
 		
 	</head>
 
@@ -20,7 +24,7 @@
 		<div class="container">
 			
 			<button id="themeButton">
-				<i id="themeIcon" data-lucide="bot"></i>
+				<i id="themeIcon" icon-name="bot"></i>
 			</button>
 			<div class="logoText">
         <a href="#">
@@ -118,40 +122,36 @@
 		
 
 		<!-- Config  -->
-		<script type="module"    src="config.js"></script>
+		<script src="config.js"></script>
 
 		<!-- Scripts  -->
-		<script type="module"    src="assets/js/layout.js"></script>
-		<script type="module"    src="assets/js/theme.js"></script>
-		<script type="module"    src="assets/js/time.js"></script>
-		<script type="module"    src="assets/js/install.js"></script>
-		<script type="module"    src="assets/js/search.js"></script>
+		<script src="assets/js/layout.js"></script>
+		<script src="assets/js/theme.js"></script>
+		<script src="assets/js/time.js"></script>
+		<script src="assets/js/install.js"></script>
+		<script src="assets/js/search.js"></script>
 
 		<!-- Generators  -->
-		<script type="module"    src="assets/js/buttons.js"></script>
-		<script type="module"    src="assets/js/lists.js"></script>
+		<script src="assets/js/buttons.js"></script>
+		<script src="assets/js/lists.js"></script>
 
 		
 		
 
 		<!-- Icons -->
-		<script type="module"   >
+		<script>
 			lucide.createIcons();
 		</script>
 
-		<script type="module"   >
+		<script>
 			if ('serviceWorker' in navigator) {
-					navigator.serviceWorker.register('/sw.js')
-						.then((registration) => {
-							console.log('Service Worker registered with scope:', registration.scope);
-						})
-						.catch((error) => {
-							console.error('Service Worker registration failed:', error);
-						});
+					window.addEventListener('load', () => {
+						navigator.serviceWorker.register('/sw.js');
+					});
 				}
 		</script>
 
-		<script type="module"   >
+		<script>
 			// Check if the app is in standalone mode
 			if (window.matchMedia('(display-mode: fullscreen)').matches) {
 					// App is in fullscreen mode, hide the dialog
