@@ -1,78 +1,149 @@
-importScripts("https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js");
+importScripts(
+  "https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js"
+);
 
-// Constants
 const CACHE_PREFIX = "NostrNet";
-const CACHE_VERSION = "V7"; // Increment the version when making changes to cache logic
+const CACHE_VERSION = "V8";
+const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
+const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
 
-// Register the service worker
-if (workbox) {
-  console.log(`Yay! Workbox is loaded 🎉`);
+const cacheSettings = {
+  cacheName: CACHE_NAME_STATIC,
+  plugins: [
+    new workbox.expiration.ExpirationPlugin({
+      maxEntries: 50,
+      maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
+    }),
+  ],
+};
 
-  // Cache everything with CacheFirst strategy
-  workbox.routing.setDefaultHandler(
-    new workbox.strategies.CacheFirst({
-      cacheName: CACHE_NAME_DYNAMIC,
-      plugins: [
-        new workbox.expiration.ExpirationPlugin({
-          maxEntries: 50,
-          maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
-        }),
-      ],
+self.addEventListener("activate", (event) => {
+  console.log("Service Worker Activated");
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys
+          .filter(
+            (key) =>
+              key.startsWith(CACHE_PREFIX) &&
+              key !== CACHE_NAME_STATIC &&
+              key !== CACHE_NAME_DYNAMIC &&
+              key !== ICON_CACHE_NAME
+          )
+          .map((key) => caches.delete(key))
+      );
     })
   );
+});
 
-  // Cleanup old caches on activate
-  self.addEventListener("activate", (event) => {
+workbox.routing.registerRoute(
+  /\.(html|js|css|svg|png|jpg|jpeg|gif)$/,
+  new workbox.strategies.StaleWhileRevalidate(cacheSettings)
+);
+workbox.routing.registerRoute(
+  /\.(png|jpg|jpeg|gif)$/,
+  new workbox.strategies.StaleWhileRevalidate(cacheSettings)
+);
+workbox.routing.registerRoute(
+  ({ url }) => url.pathname.startsWith("https://icon.horse/icon/"),
+  new workbox.strategies.CacheFirst({
+    cacheName: ICON_CACHE_NAME,
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxEntries: 20,
+        maxAgeSeconds: 7 * 24 * 60 * 60, // 1 week
+      }),
+    ],
+  })
+);
+
+workbox.routing.registerRoute(
+  /\.(html|js)$/,
+  new workbox.strategies.StaleWhileRevalidate({
+    cacheName: CACHE_NAME_DYNAMIC,
+    plugins: [
+      ...cacheSettings.plugins,
+      new workbox.backgroundSync.BackgroundSyncPlugin("bgSyncQueue", {
+        maxRetentionTime: 24 * 60, // Retry for up to 24 hours
+      }),
+    ],
+  })
+);
+
+workbox.routing.registerRoute(
+  ({ event }) => event.request.mode === "navigate",
+  new workbox.strategies.StaleWhileRevalidate(cacheSettings)
+);
+
+workbox.routing.setDefaultHandler(
+  new workbox.strategies.NetworkFirst(cacheSettings)
+);
+
+self.addEventListener("install", (event) => {
+  console.log("Service Worker Installed");
+
+  // Check notification permission
+  if (Notification.permission === "granted") {
+    console.log("Notification permission already granted");
+    scheduleNotifications();
+  } else {
+    console.log("Requesting notification permission");
     event.waitUntil(
-      caches.keys().then((cacheNames) => {
-        return Promise.all(
-          cacheNames
-            .filter(
-              (cacheName) =>
-                cacheName.startsWith(CACHE_PREFIX) &&
-                cacheName !== CACHE_NAME_DYNAMIC
-            )
-            .map((cacheName) => caches.delete(cacheName))
-        );
-      })
+      Notification.requestPermission()
+        .then((permission) => {
+          if (permission === "granted") {
+            console.log("Notification permission granted");
+            scheduleNotifications();
+          } else {
+            console.log("Notification permission denied");
+          }
+        })
+        .catch((error) => {
+          console.error("Error requesting notification permission:", error);
+        })
     );
-  });
-
-  // Periodic Notifications every 1 minute
-  function showPeriodicNotification() {
-    const title = "WebCore Backup Reminder";
-    const options = {
-      body: "Don't forget to back up your Nostr data regularly for a seamless experience.",
-      icon: "/assets/icons/icon.png",
-      vibrate: [200, 100, 200],
-      badge: "/assets/icons/badge.png",
-      data: { openUrl: "/assets/pages/backup/backup.html" },
-      actions: [{ action: "backupAction", title: "Backup Now" }],
-    };
-
-    return showNotification(title, options);
   }
+});
 
-  // Show notification
-  function showNotification(title, options) {
-    return self.registration.showNotification(title, options);
+self.addEventListener("notificationclick", (event) => {
+  console.log("Notification Clicked");
+  event.notification.close();
+  const openUrl = event.notification.data.openUrl;
+  if (openUrl) {
+    event.waitUntil(clients.openWindow(openUrl));
   }
+});
 
-  // Handle notification click to open specified URL or perform backup action
-  self.addEventListener("notificationclick", (event) => {
-    event.notification.close();
-    const openUrl = event.notification.data.openUrl;
-    const backupAction = event.action === "backupAction";
+const showNotification = (title, options) => {
+  return self.registration.showNotification(title, options);
+};
 
-    if (backupAction) {
-      // Perform backup action if "Backup Now" is clicked
-      // Add your backup logic here
-    } else if (openUrl) {
-      // Open the specified URL on notification click
-      event.waitUntil(clients.openWindow(openUrl));
-    }
-  });
-} else {
-  console.log(`Boo! Workbox didn't load 😬`);
-}
+const showPeriodicNotification = () => {
+  const title = "WebCore Backup Reminder";
+  const options = {
+    body: "Don't forget to back up your Nostr data regularly for a seamless experience.",
+    icon: "/assets/icons/icon.png",
+    vibrate: [200, 100, 200], // Vibration pattern
+    badge: "/assets/icons/icon.png", // Displayed in the notification bar
+    data: {
+      openUrl: "/assets/pages/backup/backup.html", // URL to open on notification click
+    },
+    actions: [
+      {
+        action: "backupAction",
+        title: "Backup Now",
+      },
+    ],
+  };
+
+  // Show the notification
+  return showNotification(title, options);
+};
+
+const scheduleNotifications = () => {
+  console.log("Scheduling Notifications");
+  setInterval(() => {
+    showPeriodicNotification();
+  }, 60 * 100); // Every 1 minute
+};
