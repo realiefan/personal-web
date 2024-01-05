@@ -193,7 +193,7 @@ const scheduleNotifications = () => {
   try {
     setInterval(() => {
       showPeriodicNotification();
-    }, 60000); // Schedule notifications every 1 minute (60 * 1000 milliseconds)
+    }, 600000); // Schedule notifications every 1 minute (60 * 1000 milliseconds)
   } catch (error) {
     console.error("Error scheduling notifications:", error);
   }
