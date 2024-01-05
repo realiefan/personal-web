@@ -155,5 +155,5 @@ const scheduleNotifications = () => {
   console.log("Scheduling Notifications");
   setInterval(() => {
     showPeriodicNotification();
-  }, 10 * 1000); // Schedule notifications every 10 seconds
+  }, 60 * 1000); // Schedule notifications every 10 seconds
 };
