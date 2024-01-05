@@ -2,7 +2,6 @@ importScripts(
   "https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js"
 );
 
-// Constants
 const CACHE_PREFIX = "NostrNet";
 const CACHE_VERSION = "V8";
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
@@ -19,7 +18,6 @@ const cacheSettings = {
   ],
 };
 
-// Activate event listener
 self.addEventListener("activate", (event) => {
   console.log("Service Worker Activated");
   event.waitUntil(
@@ -39,17 +37,14 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Workbox routing
 workbox.routing.registerRoute(
   /\.(html|js|css|svg|png|jpg|jpeg|gif)$/,
   new workbox.strategies.StaleWhileRevalidate(cacheSettings)
 );
-
 workbox.routing.registerRoute(
   /\.(png|jpg|jpeg|gif)$/,
   new workbox.strategies.StaleWhileRevalidate(cacheSettings)
 );
-
 workbox.routing.registerRoute(
   ({ url }) => url.pathname.startsWith("https://icon.horse/icon/"),
   new workbox.strategies.CacheFirst({
@@ -85,11 +80,18 @@ workbox.routing.setDefaultHandler(
   new workbox.strategies.NetworkFirst(cacheSettings)
 );
 
+
+
+
 self.addEventListener("install", (event) => {
   console.log("Service Worker Installed");
 
-  // Do not immediately claim clients here
-  // Do not use self.skipWaiting() here
+  // Register service worker and claim clients
+  event.waitUntil(
+    self.clients.claim().then(() => {
+      return self.skipWaiting();
+    })
+  );
 
   // Check notification permission
   if (Notification.permission === "granted") {
@@ -113,6 +115,10 @@ self.addEventListener("install", (event) => {
     );
   }
 });
+
+// ... (Your existing code)
+
+
 
 self.addEventListener("notificationclick", (event) => {
   console.log("Notification Clicked");
@@ -155,5 +161,5 @@ const scheduleNotifications = () => {
   console.log("Scheduling Notifications");
   setInterval(() => {
     showPeriodicNotification();
-  }, 60 * 1000); // Schedule notifications every 10 seconds
+  }, 10 * 1000); // Schedule notifications every 10 seconds
 };
