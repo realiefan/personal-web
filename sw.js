@@ -87,7 +87,10 @@ workbox.routing.registerRoute(
 
 workbox.routing.setDefaultHandler(
   new workbox.strategies.NetworkFirst(cacheSettings)
+
 );
+
+
 
 // Check notification permission and schedule notifications on install
 self.addEventListener("install", (event) => {
@@ -104,23 +107,8 @@ self.addEventListener("activate", (event) => {
   // Claim clients to become active
   event.waitUntil(self.clients.claim());
 
-  // Check notification permission
-  if (Notification.permission === "granted") {
-    console.log("Notification permission already granted");
-    scheduleNotifications();
-  } else {
-    console.log("Requesting notification permission");
-    event.waitUntil(
-      Notification.requestPermission().then((permission) => {
-        if (permission === "granted") {
-          console.log("Notification permission granted");
-          scheduleNotifications();
-        } else {
-          console.log("Notification permission denied");
-        }
-      })
-    );
-  }
+  // Check notification permission and schedule notifications
+  handleNotificationPermission();
 });
 
 self.addEventListener("notificationclick", (event) => {
@@ -166,5 +154,28 @@ const scheduleNotifications = () => {
     }, 60000); // Schedule notifications every 1 minute (60 * 1000 milliseconds)
   } catch (error) {
     console.error("Error scheduling notifications:", error);
+  }
+};
+
+// Function to handle notification permission request
+const handleNotificationPermission = () => {
+  const askForPermissionAndSchedule = () => {
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        console.log("Notification permission granted");
+        scheduleNotifications();
+      } else {
+        console.log("Notification permission denied, asking again...");
+        askForPermissionAndSchedule();
+      }
+    });
+  };
+
+  if (Notification.permission === "granted") {
+    console.log("Notification permission already granted");
+    scheduleNotifications();
+  } else {
+    console.log("Requesting notification permission");
+    askForPermissionAndSchedule();
   }
 };
