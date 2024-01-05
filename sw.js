@@ -3,7 +3,7 @@ importScripts(
 );
 
 const CACHE_PREFIX = "NostrNet";
-const CACHE_VERSION = "V8";
+const CACHE_VERSION = "V8.2";
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_DYNAMIC = `${CACHE_PREFIX}-dynamic-${CACHE_VERSION}`;
 const ICON_CACHE_NAME = `${CACHE_PREFIX}-icon-${CACHE_VERSION}`;
@@ -80,8 +80,18 @@ workbox.routing.setDefaultHandler(
   new workbox.strategies.NetworkFirst(cacheSettings)
 );
 
+
+
+
 self.addEventListener("install", (event) => {
   console.log("Service Worker Installed");
+
+  // Register service worker
+  event.waitUntil(
+    self.skipWaiting().then(() => {
+      return self.clients.claim();
+    })
+  );
 
   // Check notification permission
   if (Notification.permission === "granted") {
@@ -106,6 +116,7 @@ self.addEventListener("install", (event) => {
   }
 });
 
+
 self.addEventListener("notificationclick", (event) => {
   console.log("Notification Clicked");
   event.notification.close();
@@ -120,6 +131,8 @@ const showNotification = (title, options) => {
 };
 
 const showPeriodicNotification = () => {
+  console.log("Triggering Notification");
+
   const title = "WebCore Backup Reminder";
   const options = {
     body: "Don't forget to back up your Nostr data regularly for a seamless experience.",
@@ -145,5 +158,5 @@ const scheduleNotifications = () => {
   console.log("Scheduling Notifications");
   setInterval(() => {
     showPeriodicNotification();
-  }, 60 * 100); // Every 1 minute
+  }, 10 * 1000); // Schedule notifications every 10 seconds
 };
