@@ -177,7 +177,6 @@ function setDefaultLinks() {
   {"title":"Reddit","url":"https://www.reddit.com/"},
   {"title":"Wormhole","url":"https://wormhole.app/"},
   {"title":"Memo Ai","url":"https://www.recordergo.app/"},
-  {"title":"Wikipedia","url":"https://wikipedia.org/"},
   {"title":"Shopstr","url":"https://shopstr.store/"},
   {"title":"ProtonMail","url":"https://mail.proton.me/"},
   {"title":"Rumble","url":"https://rumble.com/"},
