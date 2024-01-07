@@ -2,7 +2,7 @@ importScripts(
   "https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js"
 );
 
-const CACHE_PREFIX = "NostrNet";
+const CACHE_PREFIX = "WebCore";
 const CACHE_VERSION = "V9.1";
 const CACHE_NAME_STATIC = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const CACHE_NAME_EXTERNAL_LIBRARIES = `${CACHE_PREFIX}-external-libraries-${CACHE_VERSION}`;
