@@ -27,7 +27,7 @@ const CONFIG = {
       id: "1",
       name: "Calendar",
       icon: "calendar-check-2",
-      link: "https://cal.WebCore.work/",
+      link: "https://cal.nostrnet.work/",
     },
     {
       id: "3",

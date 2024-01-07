@@ -1,7 +1,7 @@
 {
-  "name": "WebCore",
-  "short_name": "WebCore",
-  "description": "WebCore: Web portal by WebCore",
+  "name": "NostrNet",
+  "short_name": "NostrNet",
+  "description": "NostrNet: Web portal by NostrNet",
   "version": "1.0.0",
   "start_url": "/",
   "display": "standalone",
