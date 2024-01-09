@@ -11,7 +11,7 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
   /https:\/\/icon\.horse\/icon\//,
   new workbox.strategies.StaleWhileRevalidate({
-    cacheName: 'IconHorse-api',
+    cacheName: 'icon-cache',
   })
 );
 
