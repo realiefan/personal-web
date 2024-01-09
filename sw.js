@@ -9,6 +9,14 @@ workbox.routing.registerRoute(
   })
 );
 
+// Set up caching strategy for images from the specified API
+workbox.routing.registerRoute(
+  ({ request }) => request.destination === 'image' && request.url.startsWith('https://icon.horse/icon/'),
+  new workbox.strategies.CacheFirst({
+    cacheName: 'NostrNet-icon-images',
+  })
+);
+
 // Precache specific assets during installation
 workbox.precaching.precacheAndRoute([
   { url: '/index.html', revision: '123456' },
