@@ -44,10 +44,3 @@ self.addEventListener('activate', (event) => {
     })
   );
 });
-
-// Your fetchIcon function remains unchanged
-function fetchIcon(url) {
-  const urlWithoutProtocol = url.replace(/^https?:\/\//, "");
-  const iconURL = `https://icon.horse/icon/${urlWithoutProtocol}`;
-  return Promise.resolve(iconURL);
-}
